@@ -55,7 +55,8 @@
   transform: translateX(-50%);
 }
 
-.processing-loader img {
+.processing-loader img,
+.processing-loader svg {
   display: block;
   width: 100%;
   height: 100%;

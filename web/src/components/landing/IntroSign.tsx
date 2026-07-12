@@ -14,12 +14,18 @@ export function IntroSign({ wobble }: IntroSignProps) {
   useEffect(() => {
     if (!stripesRef.current) return
 
-    // Setup seamless horizontal translation loop for stripes
-    const stripesTween = gsap.to(stripesRef.current, {
-      x: -43.6704,
+    // Setup seamless horizontal translation loop for stripes in SVG coordinates
+    const stripesObj = { x: 0 }
+    const stripesTween = gsap.to(stripesObj, {
+      x: 43.6704,
       duration: 1.2,
       ease: 'none',
       repeat: -1,
+      onUpdate: () => {
+        if (stripesRef.current) {
+          stripesRef.current.setAttribute('transform', `translate(${stripesObj.x}, 0)`)
+        }
+      }
     })
 
     let speedTimer: number | undefined
@@ -48,14 +54,14 @@ export function IntroSign({ wobble }: IntroSignProps) {
         }
       })
 
-      // Accelerate stripes 500ms before transition (at 8500ms from start, i.e., 8420ms after wobble stage starts)
+      // Accelerate stripes 500ms before transition (at 5500ms from start, i.e., 5420ms after wobble stage starts)
       speedTimer = window.setTimeout(() => {
         gsap.to(stripesTween, {
           timeScale: 4.5,
           duration: 0.5,
           ease: 'power2.in',
         })
-      }, 8420)
+      }, 5420)
     }
 
     return () => {
@@ -83,6 +89,8 @@ export function IntroSign({ wobble }: IntroSignProps) {
             <rect width="263" height="28" rx="14" fill="#D9D9D9"/>
           </mask>
           <g mask="url(#mask0_211_1361)" ref={stripesRef}>
+            <path d="M-64.0167 -37H-42.1815L-58.9778 64H-80.813L-64.0167 -37Z" fill="#FFD500"/>
+            <path d="M-42.1815 -37H-20.3463L-37.1426 64H-58.9778L-42.1815 -37Z" fill="#CBA100"/>
             <path d="M-20.3463 -37H1.4889L-15.3074 64H-37.1426L-20.3463 -37Z" fill="#FFD500"/>
             <path d="M1.48868 -37H23.3239L6.52757 64H-15.3076L1.48868 -37Z" fill="#CBA100"/>
             <path d="M23.3241 -37H45.1593L28.363 64H6.52783L23.3241 -37Z" fill="#FFD500"/>
