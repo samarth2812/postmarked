@@ -55,25 +55,12 @@
   transform: translateX(-50%);
 }
 
-.processing-loader span {
-  display: flex;
-  width: 200%;
-  height: 100%;
-  animation: loader-stripes 5.2s linear infinite;
-  will-change: transform;
-}
-
 .processing-loader img {
-  flex: 0 0 50%;
-  width: 50%;
+  display: block;
+  width: 100%;
   height: 100%;
   user-select: none;
   pointer-events: none;
-}
-
-@keyframes loader-stripes {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
 }
 
 .sign-lines { position: absolute; inset: 0; width: 100%; height: auto; overflow: visible; }

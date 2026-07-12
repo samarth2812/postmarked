@@ -20,28 +20,24 @@ export function IntroSign({ wobble }: IntroSignProps) {
       return
     }
 
-    let active = true
-
-    void (async () => {
-      const swings = [
-        { rotate: -8.5, x: -5, transition: { type: 'spring' as const, stiffness: 138, damping: 8.5, mass: 1.25 } },
-        { rotate: 7.25, x: 4, transition: { type: 'spring' as const, stiffness: 118, damping: 9.25, mass: 1.35 } },
-        { rotate: -5.4, x: -3, transition: { type: 'spring' as const, stiffness: 98, damping: 10.5, mass: 1.48 } },
-        { rotate: 4.35, x: 2, transition: { type: 'spring' as const, stiffness: 82, damping: 11.6, mass: 1.58 } },
-        { rotate: -3.3, x: -1.5, transition: { type: 'spring' as const, stiffness: 68, damping: 12.2, mass: 1.68 } },
-        { rotate: 2.7, x: 1, transition: { type: 'spring' as const, stiffness: 58, damping: 12.8, mass: 1.78 } },
-      ]
-
-      while (active) {
-        for (const swing of swings) {
-          if (!active) return
-          await controls.start(swing)
-        }
+    // Realistic spring-based swinging pendulum animation
+    // Start from current rotation and apply a strong initial push velocity
+    controls.start({
+      rotate: 0,
+      x: 0,
+      transition: {
+        rotate: {
+          type: 'spring',
+          stiffness: 27,
+          damping: 0.85,
+          mass: 1,
+          velocity: -170, // initial velocity in deg/s for a strong push
+        },
+        x: { duration: 0.2, ease: 'easeOut' }
       }
-    })()
+    })
 
     return () => {
-      active = false
       controls.stop()
     }
   }, [controls, wobble])
@@ -57,10 +53,7 @@ export function IntroSign({ wobble }: IntroSignProps) {
         <img className="sign-board" src={signBoard} alt="" draggable="false" />
       </motion.div>
       <div className="processing-loader" aria-hidden="true">
-        <span>
-          <img src={loader} alt="" draggable="false" />
-          <img src={loader} alt="" draggable="false" />
-        </span>
+        <img src={loader} alt="" draggable="false" />
       </div>
     </motion.section>
   )

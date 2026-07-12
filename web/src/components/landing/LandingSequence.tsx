@@ -12,10 +12,10 @@ type SequenceStage = 'intro' | 'wobble' | 'reveal' | 'logo' | 'logoOut' | 'discl
 
 const schedule: Array<[number, SequenceStage]> = [
   [80, 'wobble'],
-  [2050, 'reveal'],
-  [2860, 'logo'],
-  [4020, 'logoOut'],
-  [4420, 'disclaimer'],
+  [9000, 'reveal'],
+  [9810, 'logo'],
+  [10970, 'logoOut'],
+  [11370, 'disclaimer'],
 ]
 
 export function LandingSequence({ onLandingComplete }: LandingSequenceProps) {
