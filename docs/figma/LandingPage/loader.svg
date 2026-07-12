@@ -1,0 +1,21 @@
+<svg width="263" height="28" viewBox="0 0 263 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+<mask id="mask0_211_1361" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="263" height="28">
+<rect width="263" height="28" rx="14" fill="#D9D9D9"/>
+</mask>
+<g mask="url(#mask0_211_1361)">
+<path d="M-20.3463 -37H1.4889L-15.3074 64H-37.1426L-20.3463 -37Z" fill="#FFD500"/>
+<path d="M1.48868 -37H23.3239L6.52757 64H-15.3076L1.48868 -37Z" fill="#CBA100"/>
+<path d="M23.3241 -37H45.1593L28.363 64H6.52783L23.3241 -37Z" fill="#FFD500"/>
+<path d="M45.1591 -37H66.9943L50.198 64H28.3628L45.1591 -37Z" fill="#CBA100"/>
+<path d="M66.9945 -37H88.8297L72.0334 64H50.1982L66.9945 -37Z" fill="#FFD500"/>
+<path d="M88.8295 -37H110.665L93.8684 64H72.0332L88.8295 -37Z" fill="#CBA100"/>
+<path d="M110.665 -37H132.5L115.704 64H93.8687L110.665 -37Z" fill="#FFD500"/>
+<path d="M132.296 -37H154.131L137.335 64H115.5L132.296 -37Z" fill="#CBA100"/>
+<path d="M154.131 -37H175.966L159.17 64H137.335L154.131 -37Z" fill="#FFD500"/>
+<path d="M175.967 -37H197.802L181.006 64H159.17L175.967 -37Z" fill="#CBA100"/>
+<path d="M197.802 -37H219.637L202.841 64H181.005L197.802 -37Z" fill="#FFD500"/>
+<path d="M219.637 -37H241.472L224.676 64H202.841L219.637 -37Z" fill="#CBA100"/>
+<path d="M241.472 -37H263.307L246.511 64H224.676L241.472 -37Z" fill="#FFD500"/>
+<path d="M263.308 -37H285.143L268.346 64H246.511L263.308 -37Z" fill="#CBA100"/>
+</g>
+</svg>
