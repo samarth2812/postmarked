@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { motion, useAnimationControls } from 'framer-motion'
 import { gsap } from 'gsap'
 import signBoard from '../../../../docs/figma/LandingPage/sign_board.svg'
@@ -10,11 +10,13 @@ type IntroSignProps = {
 export function IntroSign({ wobble }: IntroSignProps) {
   const controls = useAnimationControls()
   const stripesRef = useRef<SVGGElement>(null)
+  const [progress, setProgress] = useState(0)
 
   useEffect(() => {
-    if (!stripesRef.current) return
+    let activeTimeline: gsap.core.Timeline | undefined
+    let speedTimer: number | undefined
 
-    // Setup seamless horizontal translation loop for stripes in SVG coordinates
+    // Setup seamless horizontal translation loop for stripes in SVG coordinates (viewBox units)
     const stripesObj = { x: 0 }
     const stripesTween = gsap.to(stripesObj, {
       x: 43.6704,
@@ -27,8 +29,6 @@ export function IntroSign({ wobble }: IntroSignProps) {
         }
       }
     })
-
-    let speedTimer: number | undefined
 
     if (!wobble) {
       // Idle stage
@@ -54,22 +54,52 @@ export function IntroSign({ wobble }: IntroSignProps) {
         }
       })
 
-      // Accelerate stripes 500ms before transition (at 5500ms from start, i.e., 5420ms after wobble stage starts)
+      // Setup filling progress timeline over exactly 5.92 seconds (from 80ms wobble start to 6000ms reveal)
+      const progressObj = { value: 0 }
+      activeTimeline = gsap.timeline({
+        onUpdate: () => {
+          setProgress(progressObj.value)
+        }
+      })
+
+      // Phase 1: Fill up to 75% slowly over 5.42 seconds (5420ms)
+      activeTimeline.to(progressObj, {
+        value: 0.75,
+        duration: 5.42,
+        ease: 'power1.out',
+      })
+
+      // Phase 2: Fill the remaining 25% quickly over 0.5 seconds (500ms)
+      activeTimeline.to(progressObj, {
+        value: 1.0,
+        duration: 0.5,
+        ease: 'power2.in',
+      })
+
+      // Accelerate stripes 500ms before transition (at 5420ms since wobble start)
       speedTimer = window.setTimeout(() => {
-        gsap.to(stripesTween, {
-          timeScale: 4.5,
-          duration: 0.5,
-          ease: 'power2.in',
-        })
+        if (stripesTween) {
+          gsap.to(stripesTween, {
+            timeScale: 4.5,
+            duration: 0.5,
+            ease: 'power2.in',
+          })
+        }
       }, 5420)
     }
 
     return () => {
       controls.stop()
-      stripesTween.kill()
+      if (stripesTween) {
+        stripesTween.kill()
+      }
+      if (activeTimeline) {
+        activeTimeline.kill()
+      }
       if (speedTimer) {
         window.clearTimeout(speedTimer)
       }
+      setProgress(0)
     }
   }, [controls, wobble])
 
@@ -88,27 +118,34 @@ export function IntroSign({ wobble }: IntroSignProps) {
           <mask id="mask0_211_1361" style={{ maskType: 'alpha' }} maskUnits="userSpaceOnUse" x="0" y="0" width="263" height="28">
             <rect width="263" height="28" rx="14" fill="#D9D9D9"/>
           </mask>
-          <g mask="url(#mask0_211_1361)" ref={stripesRef}>
-            <path d="M-64.0167 -37H-42.1815L-58.9778 64H-80.813L-64.0167 -37Z" fill="#FFD500"/>
-            <path d="M-42.1815 -37H-20.3463L-37.1426 64H-58.9778L-42.1815 -37Z" fill="#CBA100"/>
-            <path d="M-20.3463 -37H1.4889L-15.3074 64H-37.1426L-20.3463 -37Z" fill="#FFD500"/>
-            <path d="M1.48868 -37H23.3239L6.52757 64H-15.3076L1.48868 -37Z" fill="#CBA100"/>
-            <path d="M23.3241 -37H45.1593L28.363 64H6.52783L23.3241 -37Z" fill="#FFD500"/>
-            <path d="M45.1591 -37H66.9943L50.198 64H28.3628L45.1591 -37Z" fill="#CBA100"/>
-            <path d="M66.9945 -37H88.8297L72.0334 64H50.1982L66.9945 -37Z" fill="#FFD500"/>
-            <path d="M88.8295 -37H110.665L93.8684 64H72.0332L88.8295 -37Z" fill="#CBA100"/>
-            <path d="M110.665 -37H132.5L115.704 64H93.8687L110.665 -37Z" fill="#FFD500"/>
-            <path d="M132.296 -37H154.131L137.335 64H115.5L132.296 -37Z" fill="#CBA100"/>
-            <path d="M154.131 -37H175.966L159.17 64H137.335L154.131 -37Z" fill="#FFD500"/>
-            <path d="M175.967 -37H197.802L181.006 64H159.17L175.967 -37Z" fill="#CBA100"/>
-            <path d="M197.802 -37H219.637L202.841 64H181.005L197.802 -37Z" fill="#FFD500"/>
-            <path d="M219.637 -37H241.472L224.676 64H202.841L219.637 -37Z" fill="#CBA100"/>
-            <path d="M241.472 -37H263.307L246.511 64H224.676L241.472 -37Z" fill="#FFD500"/>
-            <path d="M263.308 -37H285.143L268.346 64H246.511L263.308 -37Z" fill="#CBA100"/>
-            <path d="M285.143 -37H306.978L290.181 64H268.346L285.143 -37Z" fill="#FFD500"/>
-            <path d="M306.978 -37H328.813L312.016 64H290.181L306.978 -37Z" fill="#CBA100"/>
+          <g mask="url(#mask0_211_1361)">
+            <g ref={stripesRef}>
+              <path d="M-64.0167 -37H-42.1815L-58.9778 64H-80.813L-64.0167 -37Z" fill="#FFD500"/>
+              <path d="M-42.1815 -37H-20.3463L-37.1426 64H-58.9778L-42.1815 -37Z" fill="#CBA100"/>
+              <path d="M-20.3463 -37H1.4889L-15.3074 64H-37.1426L-20.3463 -37Z" fill="#FFD500"/>
+              <path d="M1.48868 -37H23.3239L6.52757 64H-15.3076L1.48868 -37Z" fill="#CBA100"/>
+              <path d="M23.3241 -37H45.1593L28.363 64H6.52783L23.3241 -37Z" fill="#FFD500"/>
+              <path d="M45.1591 -37H66.9943L50.198 64H28.3628L45.1591 -37Z" fill="#CBA100"/>
+              <path d="M66.9945 -37H88.8297L72.0334 64H50.1982L66.9945 -37Z" fill="#FFD500"/>
+              <path d="M88.8295 -37H110.665L93.8684 64H72.0332L88.8295 -37Z" fill="#CBA100"/>
+              <path d="M110.665 -37H132.5L115.704 64H93.8687L110.665 -37Z" fill="#FFD500"/>
+              <path d="M132.296 -37H154.131L137.335 64H115.5L132.296 -37Z" fill="#CBA100"/>
+              <path d="M154.131 -37H175.966L159.17 64H137.335L154.131 -37Z" fill="#FFD500"/>
+              <path d="M175.967 -37H197.802L181.006 64H159.17L175.967 -37Z" fill="#CBA100"/>
+              <path d="M197.802 -37H219.637L202.841 64H181.005L197.802 -37Z" fill="#FFD500"/>
+              <path d="M219.637 -37H241.472L224.676 64H202.841L219.637 -37Z" fill="#CBA100"/>
+              <path d="M241.472 -37H263.307L246.511 64H224.676L241.472 -37Z" fill="#FFD500"/>
+              <path d="M263.308 -37H285.143L268.346 64H246.511L263.308 -37Z" fill="#CBA100"/>
+              <path d="M285.143 -37H306.978L290.181 64H268.346L285.143 -37Z" fill="#FFD500"/>
+              <path d="M306.978 -37H328.813L312.016 64H290.181L306.978 -37Z" fill="#CBA100"/>
+            </g>
           </g>
         </svg>
+        {wobble && (
+          <p className="loader-percentage">
+            {Math.min(100, Math.round(progress * 100))}%
+          </p>
+        )}
       </div>
     </motion.section>
   )

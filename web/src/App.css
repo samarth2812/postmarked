@@ -49,19 +49,30 @@
   left: 50%;
   top: calc(var(--reveal-y) + clamp(255px, 22.7vw, 420px));
   width: clamp(205px, 18.25vw, 263px);
-  aspect-ratio: 263 / 28;
-  overflow: hidden;
-  border-radius: 999px;
   transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.processing-loader img,
 .processing-loader svg {
   display: block;
   width: 100%;
-  height: 100%;
+  height: auto;
   user-select: none;
   pointer-events: none;
+}
+
+.loader-percentage {
+  color: #000;
+  text-align: center;
+  font-family: "Instrument Sans", Arial, sans-serif;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 100%;
+  letter-spacing: -0.8px;
+  margin: 12px 0 0 0;
 }
 
 .sign-lines { position: absolute; inset: 0; width: 100%; height: auto; overflow: visible; }
