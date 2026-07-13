@@ -10,21 +10,22 @@ type City = {
   lat: number
   lon: number
   polaroidCount: number
+  animationDelay: number
 }
 
 const cities: City[] = [
-  { id: 'delhi', name: 'Delhi', lat: 28.6139, lon: 77.2090, polaroidCount: 3 },
-  { id: 'mussoorie', name: 'Mussoorie', lat: 30.4598, lon: 78.0792, polaroidCount: 2 },
-  { id: 'landour', name: 'Landour', lat: 30.4674, lon: 78.1002, polaroidCount: 4 },
-  { id: 'rishikesh', name: 'Rishikesh', lat: 30.0869, lon: 78.2676, polaroidCount: 3 },
-  { id: 'nainital', name: 'Nainital', lat: 29.3803, lon: 79.4636, polaroidCount: 2 },
-  { id: 'goa', name: 'Goa', lat: 15.2993, lon: 74.1240, polaroidCount: 4 },
-  { id: 'bangalore', name: 'Bangalore', lat: 12.9716, lon: 77.5946, polaroidCount: 3 },
-  { id: 'coorg', name: 'Coorg', lat: 12.3375, lon: 75.8069, polaroidCount: 2 },
-  { id: 'ooty', name: 'Ooty', lat: 11.4102, lon: 76.6950, polaroidCount: 3 },
-  { id: 'coonoor', name: 'Coonoor', lat: 11.3530, lon: 76.7959, polaroidCount: 2 },
-  { id: 'chennai', name: 'Chennai', lat: 13.0827, lon: 80.2707, polaroidCount: 4 },
-  { id: 'puducherry', name: 'Puducherry', lat: 11.9416, lon: 79.8083, polaroidCount: 3 }
+  { id: 'delhi', name: 'Delhi', lat: 28.6139, lon: 77.2090, polaroidCount: 3, animationDelay: 0.5 },
+  { id: 'mussoorie', name: 'Mussoorie', lat: 30.4598, lon: 78.0792, polaroidCount: 2, animationDelay: 1.8 },
+  { id: 'landour', name: 'Landour', lat: 30.4674, lon: 78.1002, polaroidCount: 4, animationDelay: 3.2 },
+  { id: 'rishikesh', name: 'Rishikesh', lat: 30.0869, lon: 78.2676, polaroidCount: 3, animationDelay: 4.5 },
+  { id: 'nainital', name: 'Nainital', lat: 29.3803, lon: 79.4636, polaroidCount: 2, animationDelay: 1.2 },
+  { id: 'goa', name: 'Goa', lat: 15.2993, lon: 74.1240, polaroidCount: 4, animationDelay: 2.7 },
+  { id: 'bangalore', name: 'Bangalore', lat: 12.9716, lon: 77.5946, polaroidCount: 3, animationDelay: 5.1 },
+  { id: 'coorg', name: 'Coorg', lat: 12.3375, lon: 75.8069, polaroidCount: 2, animationDelay: 0.9 },
+  { id: 'ooty', name: 'Ooty', lat: 11.4102, lon: 76.6950, polaroidCount: 3, animationDelay: 3.8 },
+  { id: 'coonoor', name: 'Coonoor', lat: 11.3530, lon: 76.7959, polaroidCount: 2, animationDelay: 2.2 },
+  { id: 'chennai', name: 'Chennai', lat: 13.0827, lon: 80.2707, polaroidCount: 4, animationDelay: 4.6 },
+  { id: 'puducherry', name: 'Puducherry', lat: 11.9416, lon: 79.8083, polaroidCount: 3, animationDelay: 1.5 }
 ]
 
 type ParticleMapProps = {
@@ -45,17 +46,47 @@ type ParticleData = {
   numMapParticles: number
 }
 
-// Custom Shaders for circular antialiased particles
+type Ripple = {
+  x: number
+  y: number
+  radius: number
+  maxRadius: number
+  strength: number
+  age: number
+  maxAge: number
+}
+
+// Custom Shaders for circular particles with dynamic GPU local glows & size pulsing
 const vertexShader = `
+  uniform float uTime;
+  uniform vec2 uHoveredCityPos;
+  
   attribute float aSize;
   attribute float aOpacity;
   varying float vOpacity;
   
   void main() {
     vOpacity = aOpacity;
-    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-    // Size attenuation (adjust sizes naturally based on distance from camera)
-    gl_PointSize = aSize * (15.0 / -mvPosition.z);
+    vec3 pos = position;
+    float sizeMultiplier = 1.0;
+    
+    // GPU Local Glow & Pulse:
+    // If a hovered location is active, modify surrounding particles within 1.5 units
+    if (uHoveredCityPos.x > -990.0) {
+      float distToCity = distance(pos.xy, uHoveredCityPos);
+      if (distToCity < 1.5) {
+        float proximity = 1.0 - distToCity / 1.5;
+        // Pulse size using a soft sine wave
+        float pulse = 1.0 + sin(uTime * 5.0) * 0.25;
+        sizeMultiplier += proximity * (pulse - 1.0 + 0.3);
+        
+        // Boost local particle brightness dynamically
+        vOpacity = min(1.0, aOpacity + proximity * 0.4 * (1.0 + sin(uTime * 5.0) * 0.15));
+      }
+    }
+    
+    vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+    gl_PointSize = aSize * sizeMultiplier * (15.0 / -mvPosition.z);
     gl_Position = projectionMatrix * mvPosition;
   }
 `
@@ -90,20 +121,33 @@ export function ParticleMap({ showPolaroids, onAssemblyComplete }: ParticleMapPr
   // States to avoid accessing refs during render
   const [rawPoints, setRawPoints] = useState<{ x: number; y: number }[]>([])
   const [mapCenter, setMapCenter] = useState<{ x: number; y: number }>({ x: 418.5, y: 471.0 })
+  const [activeCityId, setActiveCityId] = useState<string | null>(null)
   
   // Track timeline in refs for high frequency useFrame updates without re-renders
   const elapsedTimeRef = useRef(0)
   const assemblyCompleteTriggeredRef = useRef(false)
+  const activeCityIdRef = useRef<string | null>(null)
   
   // Reference for updating the positions inside the frame loop
   const particlesRef = useRef<ParticleData | null>(null)
   const geometryRef = useRef<THREE.BufferGeometry>(null)
+  const materialRef = useRef<THREE.ShaderMaterial>(null)
+  
+  // Ripple parameters
+  const ripplesRef = useRef<Ripple[]>([])
+  const prevMousePosRef = useRef<THREE.Vector3>(new THREE.Vector3())
+  const lastRippleTimeRef = useRef<number>(0)
+  
+  // Shader uniforms declared at top level to satisfy hooks guidelines
+  const shaderUniforms = useMemo(() => ({
+    uTime: { value: 0 },
+    uHoveredCityPos: { value: new THREE.Vector2(-999.0, -999.0) }
+  }), [])
   
   // Dynamic scaling to center and fit the map to screen height/width proportionally
   const scale = useMemo(() => {
     const mapWidth = 835
     const mapHeight = 940
-    // Fill up to 75% of screen size to leave comfortable margin
     const scaleX = (width * 0.75) / mapWidth
     const scaleY = (height * 0.75) / mapHeight
     return Math.min(scaleX, scaleY)
@@ -305,15 +349,85 @@ export function ParticleMap({ showPolaroids, onAssemblyComplete }: ParticleMapPr
     
     const { positions, velocities, targets, opacities, seeds, isMap, count, numMapParticles } = data
     
-    // Phase 1 (0-1s): Calm drift
-    // Phase 2 (1-2.2s): Assemble into outline
-    // Phase 3 (2.2s+): Complete
-    let assembleFactor = 0
-    if (elapsed > 1.0) {
-      assembleFactor = Math.min(1.0, (elapsed - 1.0) / 1.2) // Form over 1.2 seconds
+    // Project current cursor screen position to 3D world coordinates on Z = 0 plane
+    state.raycaster.setFromCamera(state.pointer, state.camera)
+    const planeIntersect = new THREE.Vector3()
+    state.raycaster.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 0, 1), 0), planeIntersect)
+    const mouseX3D = planeIntersect.x
+    const mouseY3D = planeIntersect.y
+    
+    // 1. Expanding Mouse Movement Ripples
+    const prevMouse = prevMousePosRef.current
+    const distMoved = prevMouse.distanceTo(planeIntersect)
+    if (distMoved > 0.1 && time - lastRippleTimeRef.current > 0.15) {
+      if (ripplesRef.current.length >= 3) {
+        ripplesRef.current.shift() // Limit to max 3 concurrent ripples
+      }
+      ripplesRef.current.push({
+        x: mouseX3D,
+        y: mouseY3D,
+        radius: 0.1,
+        maxRadius: 3.5,
+        strength: 0.6,
+        age: 0,
+        maxAge: 1.0
+      })
+      lastRippleTimeRef.current = time
+    }
+    prevMouse.copy(planeIntersect)
+    
+    // Update active ripples parameters
+    ripplesRef.current.forEach((r) => {
+      r.radius += dt * 3.5 // Expand wavefront outward
+      r.age += dt
+      r.strength = Math.max(0, 0.6 * (1.0 - r.age / r.maxAge))
+    })
+    ripplesRef.current = ripplesRef.current.filter((r) => r.age < r.maxAge)
+    
+    // 2. Polaroid Hover & Location Name Reveal State detection (80px radius ≈ 1.1 units)
+    let closestCityId: string | null = null
+    let minCityDist = Infinity
+    const HOVER_THRESHOLD = 1.1
+    
+    if (showPolaroids) {
+      cityPositions3D.forEach((city) => {
+        const cdx = mouseX3D - city.x3D
+        const cdy = mouseY3D - city.y3D
+        const cdist = Math.sqrt(cdx * cdx + cdy * cdy)
+        
+        if (cdist < HOVER_THRESHOLD && cdist < minCityDist) {
+          minCityDist = cdist
+          closestCityId = city.id
+        }
+      })
+      
+      if (closestCityId !== activeCityIdRef.current) {
+        activeCityIdRef.current = closestCityId
+        setActiveCityId(closestCityId)
+      }
     }
     
-    // Dispatch assembly finished trigger
+    // 3. Update uniforms for GPU glowing and pulsing effects
+    if (materialRef.current) {
+      materialRef.current.uniforms.uTime.value = time
+      if (activeCityIdRef.current) {
+        const activeCity = cityPositions3D.find((c) => c.id === activeCityIdRef.current)
+        if (activeCity) {
+          materialRef.current.uniforms.uHoveredCityPos.value.set(activeCity.x3D, activeCity.y3D)
+        } else {
+          materialRef.current.uniforms.uHoveredCityPos.value.set(-999.0, -999.0)
+        }
+      } else {
+        materialRef.current.uniforms.uHoveredCityPos.value.set(-999.0, -999.0)
+      }
+    }
+    
+    // Determine timeline stage factor
+    let assembleFactor = 0
+    if (elapsed > 1.0) {
+      assembleFactor = Math.min(1.0, (elapsed - 1.0) / 1.2)
+    }
+    
     if (elapsed >= 2.3 && !assemblyCompleteTriggeredRef.current) {
       assemblyCompleteTriggeredRef.current = true
       onAssemblyComplete()
@@ -323,16 +437,64 @@ export function ParticleMap({ showPolaroids, onAssemblyComplete }: ParticleMapPr
       const seedIdx = i * 3
       const seedX = seeds[seedIdx]
       const seedY = seeds[seedIdx + 1]
-      const seedZ = seeds[seedIdx + 2]
-      
-      // 1. Air/dust breathing offset calculations using trigonometry
-      const driftX = Math.sin(time * 0.4 + seedX * 12.0) * 0.12
-      const driftY = Math.cos(time * 0.3 + seedY * 10.0) * 0.12
-      const driftZ = Math.sin(time * 0.2 + seedZ * 8.0) * 0.08
+        // subtle breathing map offset (local procedural vibration)
+      const mapBreatheX = Math.sin(time * 0.8 + seedX * 5.0) * 0.02
+      const mapBreatheY = Math.cos(time * 0.7 + seedY * 5.0) * 0.02
       
       const px = positions[i * 3]
       const py = positions[i * 3 + 1]
       const pz = positions[i * 3 + 2]
+      
+      // Calculate cursor vector
+      const curDx = mouseX3D - px
+      const curDy = mouseY3D - py
+      const curDist = Math.sqrt(curDx * curDx + curDy * curDy)
+      
+      // Accumulate cursor interaction forces
+      let interactFx = 0
+      let interactFy = 0
+      
+      if (curDist > 0.01) {
+        // A. Cursor Magnetic Field attraction (Radius 1.5 units)
+        if (curDist < 1.5) {
+          const attractionScale = 1.0 - curDist / 1.5
+          const pull = attractionScale * 0.007
+          interactFx += curDx * pull
+          interactFy += curDy * pull
+          
+          // Tangential Orbit swirl force
+          const perpX = -curDy
+          const perpY = curDx
+          const orbit = attractionScale * 0.004
+          interactFx += (perpX / curDist) * orbit
+          interactFy += (perpY / curDist) * orbit
+        }
+        
+        // B. Close Repulsion force (Radius 0.45 units)
+        if (curDist < 0.45) {
+          const repulsionScale = 1.0 - curDist / 0.45
+          const push = repulsionScale * 0.025
+          interactFx -= (curDx / curDist) * push
+          interactFy -= (curDy / curDist) * push
+        }
+      }
+      
+      // C. Expandable ripples radial impulses
+      let rippleFx = 0
+      let rippleFy = 0
+      ripplesRef.current.forEach((r) => {
+        const rdx = px - r.x
+        const rdy = py - r.y
+        const rdist = Math.sqrt(rdx * rdx + rdy * rdy)
+        if (rdist > 0.01) {
+          const wavefrontDist = Math.abs(rdist - r.radius)
+          if (wavefrontDist < 0.3) {
+            const push = (1.0 - wavefrontDist / 0.3) * r.strength * 0.12
+            rippleFx += (rdx / rdist) * push
+            rippleFy += (rdy / rdist) * push
+          }
+        }
+      })
       
       if (isMap[i] === 1) {
         // Map particle
@@ -341,52 +503,50 @@ export function ParticleMap({ showPolaroids, onAssemblyComplete }: ParticleMapPr
         const tz = targets[i * 3 + 2]
         
         if (assembleFactor > 0) {
-          // Physics: spring stiffness increases to pull them in and settle them tight
           const springConstant = 0.04 + assembleFactor * 0.16
           const damping = 0.88 - assembleFactor * 0.04
           
-          // Cinematic curve offset: particles swing sideways while assembling
           const curveStrength = Math.sin(assembleFactor * Math.PI) * 1.2
           const offsetX = Math.sin(seedY * Math.PI) * curveStrength
           const offsetY = Math.cos(seedX * Math.PI) * curveStrength
           
-          // Calculate force (F = k * dx)
-          const fx = (tx + offsetX - px) * springConstant
-          const fy = (ty + offsetY - py) * springConstant
+          // Spring force + Cursor interactions + Ripples
+          const fx = (tx + offsetX - px) * springConstant + interactFx + rippleFx
+          const fy = (ty + offsetY - py) * springConstant + interactFy + rippleFy
           const fz = (tz - pz) * springConstant
           
-          // Update velocity and dampen
           velocities[i * 3] = (velocities[i * 3] + fx) * damping
           velocities[i * 3 + 1] = (velocities[i * 3 + 1] + fy) * damping
           velocities[i * 3 + 2] = (velocities[i * 3 + 2] + fz) * damping
           
-          // Apply position translation
           positions[i * 3] += velocities[i * 3]
           positions[i * 3 + 1] += velocities[i * 3 + 1]
           positions[i * 3 + 2] += velocities[i * 3 + 2]
           
-          // Subtly breathe in final state
+          // Subtly breathe map on final state
           if (assembleFactor >= 1.0) {
-            positions[i * 3] += driftX * 0.02
-            positions[i * 3 + 1] += driftY * 0.02
-            positions[i * 3 + 2] += driftZ * 0.02
+            positions[i * 3] += mapBreatheX
+            positions[i * 3 + 1] += mapBreatheY
           }
         } else {
-          // Phase 1 drift: Calmly float around initial spot
-          velocities[i * 3] = (velocities[i * 3] + (Math.sin(time * 0.6 + seedX * 6.0) * 0.005)) * 0.98
-          velocities[i * 3 + 1] = (velocities[i * 3 + 1] + (Math.cos(time * 0.5 + seedY * 6.0) * 0.005)) * 0.98
-          velocities[i * 3 + 2] = (velocities[i * 3 + 2] + (Math.sin(time * 0.4 + seedZ * 4.0) * 0.003)) * 0.98
+          // Phase 1 drift + Cursor interactions
+          const fx = (Math.sin(time * 0.6 + seedX * 6.0) * 0.005) + interactFx
+          const fy = (Math.cos(time * 0.5 + seedY * 6.0) * 0.005) + interactFy
+          
+          velocities[i * 3] = (velocities[i * 3] + fx) * 0.98
+          velocities[i * 3 + 1] = (velocities[i * 3 + 1] + fy) * 0.98
           
           positions[i * 3] += velocities[i * 3]
           positions[i * 3 + 1] += velocities[i * 3 + 1]
           positions[i * 3 + 2] += velocities[i * 3 + 2]
         }
       } else {
-        // Ambient particle
-        // Gentle brownian velocity changes
-        velocities[i * 3] = (velocities[i * 3] + (Math.sin(time * 0.4 + seedX * 8.0) * 0.004)) * 0.97
-        velocities[i * 3 + 1] = (velocities[i * 3 + 1] + (Math.cos(time * 0.3 + seedY * 8.0) * 0.004)) * 0.97
-        velocities[i * 3 + 2] = (velocities[i * 3 + 2] + (Math.sin(time * 0.2 + seedZ * 6.0) * 0.002)) * 0.97
+        // Ambient particle + Cursor interactions + Ripples
+        const fx = (Math.sin(time * 0.4 + seedX * 8.0) * 0.004) + interactFx + rippleFx
+        const fy = (Math.cos(time * 0.3 + seedY * 8.0) * 0.004) + interactFy + rippleFy
+        
+        velocities[i * 3] = (velocities[i * 3] + fx) * 0.97
+        velocities[i * 3 + 1] = (velocities[i * 3 + 1] + fy) * 0.97
         
         positions[i * 3] += velocities[i * 3]
         positions[i * 3 + 1] += velocities[i * 3 + 1]
@@ -397,7 +557,7 @@ export function ParticleMap({ showPolaroids, onAssemblyComplete }: ParticleMapPr
         const isFading = ambientIdx >= 400
         if (isFading && assembleFactor > 0) {
           const initOpacity = 0.5 + (seeds[seedIdx] * 0.2)
-          opacities[i] = Math.max(0, initOpacity * (1 - assembleFactor))
+          opacities[i] = Math.max(0, initOpacity * (1.0 - assembleFactor))
         }
       }
     }
@@ -432,12 +592,14 @@ export function ParticleMap({ showPolaroids, onAssemblyComplete }: ParticleMapPr
           />
         </bufferGeometry>
         <shaderMaterial
+          ref={materialRef}
           attach="material"
           transparent
           depthWrite={false}
           vertexShader={vertexShader}
           fragmentShader={fragmentShader}
           blending={THREE.AdditiveBlending}
+          uniforms={shaderUniforms}
         />
       </points>
       
@@ -451,13 +613,23 @@ export function ParticleMap({ showPolaroids, onAssemblyComplete }: ParticleMapPr
             zIndexRange={[2, 10]}
             distanceFactor={10}
           >
-            <div className={`polaroid-stack ${showPolaroids ? 'visible' : ''}`}>
+            <div
+              className={`polaroid-stack ${showPolaroids ? 'visible' : ''} ${
+                activeCityId === city.id ? 'active' : ''
+              }`}
+              style={{ animationDelay: `${city.animationDelay}s` }}
+            >
               {/* Stack 2 to 4 polaroids */}
               {Array.from({ length: city.polaroidCount }).map((_, idx) => (
                 <div key={idx} className="polaroid-card">
                   <div className="polaroid-image-placeholder" />
                 </div>
               ))}
+              
+              {/* Location name fade-reveal label */}
+              <div className={`location-name-label ${activeCityId === city.id ? 'visible' : ''}`}>
+                {city.name}
+              </div>
             </div>
           </Html>
         ))}

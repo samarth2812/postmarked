@@ -104,18 +104,40 @@
   pointer-events: none;
 }
 
+@keyframes polaroidBreathe {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.025);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 .polaroid-stack {
   position: absolute;
   width: 0;
   height: 0;
   opacity: 0;
   transform: scale(0.85);
-  transition: opacity 1.5s cubic-bezier(0.25, 1, 0.5, 1), transform 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+  transition: opacity 1.5s cubic-bezier(0.25, 1, 0.5, 1),
+              transform 0.6s cubic-bezier(0.25, 1, 0.5, 1),
+              filter 0.6s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .polaroid-stack.visible {
   opacity: 1;
   transform: scale(1);
+  animation: polaroidBreathe 6s ease-in-out infinite;
+}
+
+.polaroid-stack.visible.active {
+  animation: none; /* Stay still on hover/active */
+  filter: brightness(1.15);
+  transform: scale(1.08); /* Lift forward and scale up */
+  z-index: 20;
 }
 
 /* Stacked Polaroid Cards layout */
@@ -129,6 +151,12 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
   transform-origin: center;
   will-change: transform;
+  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1),
+              box-shadow 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.polaroid-stack.active .polaroid-card {
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.6); /* Increase shadow on hover */
 }
 
 .polaroid-image-placeholder {
@@ -138,7 +166,7 @@
   border: 0.2px solid rgba(0, 0, 0, 0.05);
 }
 
-/* Random rotations and overlapping offsets for stacked look */
+/* Idle random rotations and overlapping offsets */
 .polaroid-card:nth-child(1) {
   transform: translate(-50%, -50%) rotate(-8deg);
   z-index: 1;
@@ -154,6 +182,50 @@
 .polaroid-card:nth-child(4) {
   transform: translate(-50%, -50%) rotate(5deg);
   z-index: 4;
+}
+
+/* Straighten rotations when stack is active/hovered */
+.polaroid-stack.active .polaroid-card:nth-child(1) {
+  transform: translate(-50%, -50%) rotate(-3deg);
+}
+.polaroid-stack.active .polaroid-card:nth-child(2) {
+  transform: translate(-45%, -55%) rotate(4deg);
+}
+.polaroid-stack.active .polaroid-card:nth-child(3) {
+  transform: translate(-55%, -45%) rotate(-1deg);
+}
+.polaroid-stack.active .polaroid-card:nth-child(4) {
+  transform: translate(-50%, -50%) rotate(2deg);
+}
+
+/* Location Name Reveal Label */
+.location-name-label {
+  position: absolute;
+  bottom: 24px; /* Position above the stack */
+  left: 50%;
+  transform: translate(-50%, 4px);
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1),
+              transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  pointer-events: none;
+  
+  /* Typography values exactly from requirements */
+  font-family: "Instrument Sans", sans-serif;
+  font-weight: 500; /* Medium */
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 3px 8px;
+  border-radius: 2px;
+  white-space: nowrap;
+  z-index: 30;
+}
+
+.location-name-label.visible {
+  opacity: 1;
+  transform: translate(-50%, -8px); /* Slide up translateY 4px -> 0 (from starting offset) */
 }
 
 /* Spacer to allow vertical page scrolling */
