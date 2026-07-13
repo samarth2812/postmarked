@@ -1,0 +1,173 @@
+/* HomePage styling */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.home-page {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000000;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+}
+
+/* Logo placement and animation */
+.home-logo {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  z-index: 10;
+  pointer-events: none;
+  opacity: 0;
+  animation: fadeIn 1.5s cubic-bezier(0.25, 1, 0.5, 1) 0.2s forwards;
+}
+
+.home-logo svg {
+  width: 150px;
+  height: auto;
+  display: block;
+}
+
+/* Right vertical text scrollbar container */
+.right-nav-scrollbar {
+  position: fixed;
+  right: 40px;
+  top: 15vh;
+  height: 70vh;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  z-index: 10;
+  opacity: 0;
+  animation: fadeIn 1.5s cubic-bezier(0.25, 1, 0.5, 1) 0.5s forwards;
+}
+
+.scrollbar-text {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  white-space: nowrap;
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 84px; /* Scaled down to fit screen height in one go */
+  font-style: normal;
+  font-weight: 700;
+  line-height: 100%;
+  letter-spacing: -1px;
+  color: rgba(255, 255, 255, 0.33);
+  text-align: center;
+}
+
+.scrollbar-track {
+  position: relative;
+  width: 1px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.scrollbar-handle {
+  position: absolute;
+  left: -1px;
+  width: 3px;
+  height: 50px;
+  background: #ffffff;
+  border-radius: 1.5px;
+  transform: translateY(-50%);
+  transition: top 0.1s ease-out;
+}
+
+/* WebGL canvas overlay container */
+.canvas-container {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+/* HTML overlays for Polaroids on top of Map */
+.polaroids-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.polaroid-stack {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity 1.5s cubic-bezier(0.25, 1, 0.5, 1), transform 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.polaroid-stack.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Stacked Polaroid Cards layout */
+.polaroid-card {
+  position: absolute;
+  width: 32px; /* Small, elegant size matching the Figma mock */
+  height: 38px;
+  background: #ffffff;
+  padding: 2px 2px 5px 2px;
+  border-radius: 0.5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  transform-origin: center;
+  will-change: transform;
+}
+
+.polaroid-image-placeholder {
+  width: 100%;
+  height: 26px;
+  background-color: #dfd8c7; /* Subtle warm/aged tone */
+  border: 0.2px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Random rotations and overlapping offsets for stacked look */
+.polaroid-card:nth-child(1) {
+  transform: translate(-50%, -50%) rotate(-8deg);
+  z-index: 1;
+}
+.polaroid-card:nth-child(2) {
+  transform: translate(-45%, -55%) rotate(10deg);
+  z-index: 2;
+}
+.polaroid-card:nth-child(3) {
+  transform: translate(-55%, -45%) rotate(-3deg);
+  z-index: 3;
+}
+.polaroid-card:nth-child(4) {
+  transform: translate(-50%, -50%) rotate(5deg);
+  z-index: 4;
+}
+
+/* Spacer to allow vertical page scrolling */
+.scroll-spacer {
+  height: 200vh;
+  pointer-events: none;
+}
+
+/* Hide standard browser scrollbar for cleaner look */
+html, body {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+html::-webkit-scrollbar, body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
