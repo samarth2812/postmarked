@@ -1,10 +1,11 @@
-import { useEffect, useRef } from 'react'
-import { motion } from 'framer-motion'
+import { useEffect, useRef, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import './ArchiveTimeline.css'
 
 interface PolaroidCard {
   caption: string;
   imageUrl?: string;
+  description?: string;
 }
 
 interface LocationEntry {
@@ -22,10 +23,26 @@ const LOCATIONS_DATA: LocationEntry[] = [
     state: 'Tamil Nadu',
     bgType: 'bg-theme-black',
     polaroids: [
-      { caption: 'Promenade walk', imageUrl: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'White Town lanes', imageUrl: 'https://images.unsplash.com/photo-1603258591244-c689ba488d5e?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'Auroville dome', imageUrl: 'https://images.unsplash.com/photo-1590050752117-238cb061295a?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'By the bay', imageUrl: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=400&q=80' }
+      { 
+        caption: 'Promenade walk', 
+        imageUrl: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=400&q=80',
+        description: 'A peaceful evening stroll along the rocky beach of Pondicherry, capturing the gentle waves and the soft coastal breeze.'
+      },
+      { 
+        caption: 'White Town lanes', 
+        imageUrl: 'https://images.unsplash.com/photo-1603258591244-c689ba488d5e?auto=format&fit=crop&w=400&q=80',
+        description: 'Wandering through the vibrant yellow streets lined with colonial French villas and blooming bougainvillea.'
+      },
+      { 
+        caption: 'Auroville dome', 
+        imageUrl: 'https://images.unsplash.com/photo-1590050752117-238cb061295a?auto=format&fit=crop&w=400&q=80',
+        description: 'The magnificent Matrimandir, a symbol of peaceful coexistence and spiritual unity, rising golden against the sky.'
+      },
+      { 
+        caption: 'By the bay', 
+        imageUrl: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=400&q=80',
+        description: 'Looking out at the vast blue horizon of the Bay of Bengal, where fishing boats drift under the soft morning sun.'
+      }
     ]
   },
   {
@@ -34,10 +51,26 @@ const LOCATIONS_DATA: LocationEntry[] = [
     state: 'Tamil Nadu',
     bgType: 'bg-theme-white',
     polaroids: [
-      { caption: 'Marina waves', imageUrl: 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'Kapaleeshwarar temple', imageUrl: 'https://images.unsplash.com/photo-1609137144814-722a4f404495?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'Filter coffee stop', imageUrl: 'https://images.unsplash.com/photo-1587049013516-72f10b776269?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'Sari shopping', imageUrl: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=400&q=80' }
+      { 
+        caption: 'Marina waves', 
+        imageUrl: 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?auto=format&fit=crop&w=400&q=80',
+        description: 'Catching the sunset at Marina Beach, one of the longest natural urban beaches in the world, filled with energy.'
+      },
+      { 
+        caption: 'Kapaleeshwarar temple', 
+        imageUrl: 'https://images.unsplash.com/photo-1609137144814-722a4f404495?auto=format&fit=crop&w=400&q=80',
+        description: 'Admiring the detailed Dravidian architecture and towering gopuram of this active, centuries-old sacred temple in Mylapore.'
+      },
+      { 
+        caption: 'Filter coffee stop', 
+        imageUrl: 'https://images.unsplash.com/photo-1587049013516-72f10b776269?auto=format&fit=crop&w=400&q=80',
+        description: 'Savoring a hot, frothy cup of traditional South Indian filter coffee, poured back and forth from brass tumblers.'
+      },
+      { 
+        caption: 'Sari shopping', 
+        imageUrl: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=400&q=80',
+        description: 'Exploring the busy markets of T. Nagar, filled with rows of brilliant, handwoven silk Kanchipuram saris.'
+      }
     ]
   },
   {
@@ -46,10 +79,26 @@ const LOCATIONS_DATA: LocationEntry[] = [
     state: 'Uttarakhand',
     bgType: 'bg-theme-black',
     polaroids: [
-      { caption: 'Char Dukan pancakes', imageUrl: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'Ivy Cottage view', imageUrl: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'Mist in the pines', imageUrl: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'Lal Tibba sunset', imageUrl: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=400&q=80' }
+      { 
+        caption: 'Char Dukan pancakes', 
+        imageUrl: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=400&q=80',
+        description: 'Enjoying classic cinnamon pancakes and hot ginger tea at the historic, cozy Char Dukan square.'
+      },
+      { 
+        caption: 'Ivy Cottage view', 
+        imageUrl: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=80',
+        description: 'Looking out at the snow-capped Himalayan peaks from the quiet, winding pathways of Ivy Cottage.'
+      },
+      { 
+        caption: 'Mist in the pines', 
+        imageUrl: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=400&q=80',
+        description: 'Wandering under towering deodars and pines as thick mountain fog rolls silently over the hills.'
+      },
+      { 
+        caption: 'Lal Tibba sunset', 
+        imageUrl: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=400&q=80',
+        description: 'Watching the sky turn crimson and gold over the distant snow peaks from the highest viewpoint in Landour.'
+      }
     ]
   },
   {
@@ -58,10 +107,26 @@ const LOCATIONS_DATA: LocationEntry[] = [
     state: 'Uttarakhand',
     bgType: 'bg-theme-white',
     polaroids: [
-      { caption: 'Mall Road lights', imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'Kempty cascade', imageUrl: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'Library bazaar', imageUrl: 'https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'Clouds End walk', imageUrl: 'https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?auto=format&fit=crop&w=400&q=80' }
+      { 
+        caption: 'Mall Road lights', 
+        imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
+        description: 'A lively walk down the bustling Mall Road as colonial streetlamps light up the mountain ridge.'
+      },
+      { 
+        caption: 'Kempty cascade', 
+        imageUrl: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=400&q=80',
+        description: 'Listening to the roar of Kempty Falls splashing down rock formations into a fresh mountain pool.'
+      },
+      { 
+        caption: 'Library bazaar', 
+        imageUrl: 'https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=400&q=80',
+        description: 'Passing by the iconic colonial-era library building at the gateway of Mussoories historical market.'
+      },
+      { 
+        caption: 'Clouds End walk', 
+        imageUrl: 'https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?auto=format&fit=crop&w=400&q=80',
+        description: 'Walking to the edge of the ridge where the dense oak forests end and the deep valley opens up.'
+      }
     ]
   },
   {
@@ -70,10 +135,26 @@ const LOCATIONS_DATA: LocationEntry[] = [
     state: 'Uttarakhand',
     bgType: 'bg-theme-black',
     polaroids: [
-      { caption: 'Laxman Jhula crossing', imageUrl: 'https://images.unsplash.com/photo-1598977123418-45f04b61b4bb?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'Ganga Aarti glow', imageUrl: 'https://images.unsplash.com/photo-1561361062-856753540121?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'Beatles Ashram walls', imageUrl: 'https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'Mountain breeze', imageUrl: 'https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&w=400&q=80' }
+      { 
+        caption: 'Laxman Jhula crossing', 
+        imageUrl: 'https://images.unsplash.com/photo-1598977123418-45f04b61b4bb?auto=format&fit=crop&w=400&q=80',
+        description: 'Walking across the swaying suspension bridge, looking down at the fast-flowing emerald waters of the Ganges.'
+      },
+      { 
+        caption: 'Ganga Aarti glow', 
+        imageUrl: 'https://images.unsplash.com/photo-1561361062-856753540121?auto=format&fit=crop&w=400&q=80',
+        description: 'Experiencing the evening prayer ceremony at Triveni Ghat, with hundreds of tiny oil lamps floating on the river.'
+      },
+      { 
+        caption: 'Beatles Ashram walls', 
+        imageUrl: 'https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=400&q=80',
+        description: 'Exploring the abandoned, graffiti-covered dome structures where the Beatles composed the White Album in 1968.'
+      },
+      { 
+        caption: 'Mountain breeze', 
+        imageUrl: 'https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&w=400&q=80',
+        description: 'Taking a deep breath of crisp mountain air at a quiet riverbank retreat, surrounded by green Himalayan foothills.'
+      }
     ]
   },
   {
@@ -82,10 +163,26 @@ const LOCATIONS_DATA: LocationEntry[] = [
     state: 'National Capital Territory',
     bgType: 'bg-theme-white',
     polaroids: [
-      { caption: 'Lodi Gardens stroll', imageUrl: 'https://images.unsplash.com/photo-1585135497273-1a86b09fe70e?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'Humayun\'s tomb', imageUrl: 'https://images.unsplash.com/photo-1587135941948-670b381f08e9?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'Old Delhi spice walk', imageUrl: 'https://images.unsplash.com/photo-1596797038530-2c107229654b?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'Street side chai', imageUrl: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=400&q=80' }
+      { 
+        caption: 'Lodi Gardens stroll', 
+        imageUrl: 'https://images.unsplash.com/photo-1585135497273-1a86b09fe70e?auto=format&fit=crop&w=400&q=80',
+        description: 'Walking among the majestic 15th-century Sayyid and Lodi dynasty tombs, surrounded by manicured lawns and old trees.'
+      },
+      { 
+        caption: 'Humayun\'s tomb', 
+        imageUrl: 'https://images.unsplash.com/photo-1587135941948-670b381f08e9?auto=format&fit=crop&w=400&q=80',
+        description: 'Admiring the grand red sandstone Mughal architecture that inspired the creation of the Taj Mahal.'
+      },
+      { 
+        caption: 'Old Delhi spice walk', 
+        imageUrl: 'https://images.unsplash.com/photo-1596797038530-2c107229654b?auto=format&fit=crop&w=400&q=80',
+        description: 'Navigating the narrow, crowded lanes of Khari Baoli, the largest wholesale spice market in Asia.'
+      },
+      { 
+        caption: 'Street side chai', 
+        imageUrl: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=400&q=80',
+        description: 'Sipping hot cardamon chai from a clay kulhad at a busy corner shop in Connaught Place.'
+      }
     ]
   },
   {
@@ -94,10 +191,26 @@ const LOCATIONS_DATA: LocationEntry[] = [
     state: 'Goa',
     bgType: 'bg-theme-black',
     polaroids: [
-      { caption: 'Palolem sunset', imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'Fontainhas colorful streets', imageUrl: 'https://images.unsplash.com/photo-1616843413587-9e3a37f7f3f2?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'Fort Aguada breeze', imageUrl: 'https://images.unsplash.com/photo-1540206395-68808572332f?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'Shack lunches', imageUrl: 'https://images.unsplash.com/photo-1501446529957-6226bd447c46?auto=format&fit=crop&w=400&q=80' }
+      { 
+        caption: 'Palolem sunset', 
+        imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400&q=80',
+        description: 'Watching the sun dip below the Arabian Sea, painting the sky in pastel hues behind leaning coconut palms.'
+      },
+      { 
+        caption: 'Fontainhas colorful streets', 
+        imageUrl: 'https://images.unsplash.com/photo-1616843413587-9e3a37f7f3f2?auto=format&fit=crop&w=400&q=80',
+        description: 'Wandering past bright yellow, blue, and red Portuguese villas in Panaji\'s old Latin Quarter.'
+      },
+      { 
+        caption: 'Fort Aguada breeze', 
+        imageUrl: 'https://images.unsplash.com/photo-1540206395-68808572332f?auto=format&fit=crop&w=400&q=80',
+        description: 'Standing on the ramparts of the 17th-century lighthouse fort, feeling the cool ocean spray.'
+      },
+      { 
+        caption: 'Shack lunches', 
+        imageUrl: 'https://images.unsplash.com/photo-1501446529957-6226bd447c46?auto=format&fit=crop&w=400&q=80',
+        description: 'Enjoying fresh, spicy fish curry and cold beverages with sand underfoot at a beachside shack.'
+      }
     ]
   },
   {
@@ -106,10 +219,26 @@ const LOCATIONS_DATA: LocationEntry[] = [
     state: 'Karnataka',
     bgType: 'bg-theme-white',
     polaroids: [
-      { caption: 'Coffee estate paths', imageUrl: 'https://images.unsplash.com/photo-1500627869374-13cd993b1115?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'Abbey falls splash', imageUrl: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'Raja\'s seat mist', imageUrl: 'https://images.unsplash.com/photo-1475924156734-496f6cac6ec1?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'Golden Temple peace', imageUrl: 'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=400&q=80' }
+      { 
+        caption: 'Coffee estate paths', 
+        imageUrl: 'https://images.unsplash.com/photo-1500627869374-13cd993b1115?auto=format&fit=crop&w=400&q=80',
+        description: 'Walking down shady forest trails under the canopy of silver oak and pepper vines, surrounded by coffee plants.'
+      },
+      { 
+        caption: 'Abbey falls splash', 
+        imageUrl: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=400&q=80',
+        description: 'Watching the Kaveri river cascade over rock faces, creating a cool mist throughout the surrounding valley.'
+      },
+      { 
+        caption: 'Raja\'s seat mist', 
+        imageUrl: 'https://images.unsplash.com/photo-1475924156734-496f6cac6ec1?auto=format&fit=crop&w=400&q=80',
+        description: 'Gazing at the rolling green valleys as a thick blanket of morning fog rises slowly from the hills.'
+      },
+      { 
+        caption: 'Golden Temple peace', 
+        imageUrl: 'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=400&q=80',
+        description: 'Experiencing the serenity of the Namdroling Monastery, home to massive golden Buddha statues and colorful murals.'
+      }
     ]
   },
   {
@@ -118,10 +247,26 @@ const LOCATIONS_DATA: LocationEntry[] = [
     state: 'Tamil Nadu',
     bgType: 'bg-theme-black',
     polaroids: [
-      { caption: 'Toy train ride', imageUrl: 'https://images.unsplash.com/photo-1532408840957-22729327b360?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'Botanical blooms', imageUrl: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'Pykara lake blue', imageUrl: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'Tea estates rolling green', imageUrl: 'https://images.unsplash.com/photo-1554160113-748ff8d07019?auto=format&fit=crop&w=400&q=80' }
+      { 
+        caption: 'Toy train ride', 
+        imageUrl: 'https://images.unsplash.com/photo-1532408840957-22729327b360?auto=format&fit=crop&w=400&q=80',
+        description: 'Riding the historic steam-operated Nilgiri Mountain Railway, crossing narrow bridges and dark stone tunnels.'
+      },
+      { 
+        caption: 'Botanical blooms', 
+        imageUrl: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=400&q=80',
+        description: 'Walking through terraces of exotic flowers, ferns, and a 20-million-year-old fossilized tree trunk.'
+      },
+      { 
+        caption: 'Pykara lake blue', 
+        imageUrl: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=400&q=80',
+        description: 'Boating on the quiet, pine-fringed waters of Pykara Lake, away from the busy town streets.'
+      },
+      { 
+        caption: 'Tea estates rolling green', 
+        imageUrl: 'https://images.unsplash.com/photo-1554160113-748ff8d07019?auto=format&fit=crop&w=400&q=80',
+        description: 'Stepping into the geometric rows of bright green tea leaves covering the hillsides like a carpet.'
+      }
     ]
   },
   {
@@ -130,10 +275,26 @@ const LOCATIONS_DATA: LocationEntry[] = [
     state: 'Tamil Nadu',
     bgType: 'bg-theme-white',
     polaroids: [
-      { caption: 'Dolphin\'s Nose overlook', imageUrl: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'Sim\'s park quiet', imageUrl: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'Tea factory scent', imageUrl: 'https://images.unsplash.com/photo-1563822249548-9a72b6353cdb?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'High tea afternoon', imageUrl: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=400&q=80' }
+      { 
+        caption: 'Dolphin\'s Nose overlook', 
+        imageUrl: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=80',
+        description: 'Standing on a massive rock peak, watching Catherine Falls cascade into the deep valley far below.'
+      },
+      { 
+        caption: 'Sim\'s park quiet', 
+        imageUrl: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=400&q=80',
+        description: 'Strolling through this botanical garden containing century-old trees and manicured rose beds.'
+      },
+      { 
+        caption: 'Tea factory scent', 
+        imageUrl: 'https://images.unsplash.com/photo-1563822249548-9a72b6353cdb?auto=format&fit=crop&w=400&q=80',
+        description: 'Taking a tour to see how raw tea leaves are crushed, dried, and packaged, smelling the rich aroma.'
+      },
+      { 
+        caption: 'High tea afternoon', 
+        imageUrl: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=400&q=80',
+        description: 'Relaxing on the porch of a colonial-style bungalow with a freshly brewed cup of black Nilgiri tea.'
+      }
     ]
   },
   {
@@ -142,10 +303,26 @@ const LOCATIONS_DATA: LocationEntry[] = [
     state: 'Karnataka',
     bgType: 'bg-theme-black',
     polaroids: [
-      { caption: 'Cubbon Park morning', imageUrl: 'https://images.unsplash.com/photo-1500627869374-13cd993b1115?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'Lalbagh glasshouse', imageUrl: 'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'Filter coffee mornings', imageUrl: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'Corner House sundae', imageUrl: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=400&q=80' }
+      { 
+        caption: 'Cubbon Park morning', 
+        imageUrl: 'https://images.unsplash.com/photo-1500627869374-13cd993b1115?auto=format&fit=crop&w=400&q=80',
+        description: 'Walking under giant bamboo groves as morning sunlight breaks through the leaves of this central forest.'
+      },
+      { 
+        caption: 'Lalbagh glasshouse', 
+        imageUrl: 'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?auto=format&fit=crop&w=400&q=80',
+        description: 'Admiring the glass exhibition palace modeled after London\'s Crystal Palace, surrounded by rare plants.'
+      },
+      { 
+        caption: 'Filter coffee mornings', 
+        imageUrl: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=400&q=80',
+        description: 'Standing on the pavement of a traditional café, drinking hot coffee before the city wakes up.'
+      },
+      { 
+        caption: 'Corner House sundae', 
+        imageUrl: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=400&q=80',
+        description: 'Sharing a rich, warm chocolate-fudge Death by Chocolate sundae at a legendary local dessert shop.'
+      }
     ]
   },
   {
@@ -154,10 +331,26 @@ const LOCATIONS_DATA: LocationEntry[] = [
     state: 'Uttarakhand',
     bgType: 'bg-theme-white',
     polaroids: [
-      { caption: 'Naini Lake rowing', imageUrl: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'Snow View peak', imageUrl: 'https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'Tiffin Top hike', imageUrl: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=80' },
-      { caption: 'Mall Road reflection', imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80' }
+      { 
+        caption: 'Naini Lake rowing', 
+        imageUrl: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=400&q=80',
+        description: 'Drifting across the pear-shaped volcanic lake, surrounded by rising forested mountain slopes.'
+      },
+      { 
+        caption: 'Snow View peak', 
+        imageUrl: 'https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&w=400&q=80',
+        description: 'Looking at the high Himalayan peaks through a telescope from the top of the cable car route.'
+      },
+      { 
+        caption: 'Tiffin Top hike', 
+        imageUrl: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=80',
+        description: 'Trekking through oak forests to reach the rocky peak, enjoying a birds-eye view of Nainital.'
+      },
+      { 
+        caption: 'Mall Road reflection', 
+        imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
+        description: 'Watching the town lights reflect on the ripples of the dark lake as the night temperature drops.'
+      }
     ]
   }
 ]
@@ -176,9 +369,158 @@ function getSeededRandom(seedStr: string) {
   }
 }
 
+export interface PolaroidLayoutCard {
+  caption: string;
+  imageUrl?: string;
+  description?: string;
+  offsetX: number;
+  offsetY: number;
+  rotation: number;
+  scale: number;
+  zIndex: number;
+  breatheDuration: number;
+  breatheDelay: number;
+  driftY: number;
+  driftRotate: number;
+  entryDelay: number;
+  entryRotateOffset: number;
+  hoverDelay: number;
+  hoverTilt: number;
+}
+
+export function getPolaroidsForLocation(loc: LocationEntry): PolaroidLayoutCard[] {
+  const rand = getSeededRandom(loc.id)
+  const memoriesCount = loc.polaroids.length
+  const count = 12 + Math.floor(rand() * 4) // deterministic count: 12, 13, 14, or 15 polaroids
+
+  const zIndices = Array.from({ length: count }, (_, i) => i + 1)
+  for (let i = count - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [zIndices[i], zIndices[j]] = [zIndices[j], zIndices[i]]
+  }
+
+  return Array.from({ length: count }).map((_, pIndex) => {
+    const memoryIndex = pIndex % memoriesCount
+    const memory = loc.polaroids[memoryIndex]
+    
+    // We define a set of 8 distinct target layout zones to scatter cards across the screen.
+    const zones = [
+      [-320, -180, 120, 240],  // Zone 0: Beneath CTA
+      [-180, -60, 80, 180],    // Zone 1: Left-Center
+      [-60, 60, 20, 120],      // Zone 2: Center Pile
+      [60, 180, -140, 60],     // Zone 3: Right-Center
+      [180, 320, -80, 80],     // Zone 4: Far Right
+      [120, 240, 140, 260],    // Zone 5: Bottom Right
+      [180, 300, -240, -120],  // Zone 6: Top Right
+      [-80, 80, 40, 140]       // Zone 7: Center Pile 2
+    ]
+    
+    let zoneIndex = pIndex % zones.length
+    if (pIndex >= zones.length) {
+      zoneIndex = Math.floor(rand() * zones.length)
+    }
+    
+    const zone = zones[zoneIndex]
+    const offsetX = zone[0] + rand() * (zone[1] - zone[0])
+    const offsetY = zone[2] + rand() * (zone[3] - zone[2])
+    const rotation = -18 + rand() * 36
+    const scale = 0.95 + rand() * 0.10
+    const zIndex = zIndices[pIndex]
+    
+    const breatheDuration = 6 + rand() * 4
+    const breatheDelay = -rand() * breatheDuration
+    const driftY = 1.5 + rand() * 1.5
+    const driftRotate = 0.3 + rand() * 0.5
+    const entryDelay = pIndex * 0.08
+    const entryRotateOffset = -20 + rand() * 40
+    const hoverDelay = (count - 1 - pIndex) * 0.012
+    const hoverTilt = (rand() * 3 - 1.5) * (pIndex / count)
+    
+    return {
+      caption: memory.caption,
+      imageUrl: memory.imageUrl,
+      description: memory.description,
+      offsetX,
+      offsetY,
+      rotation,
+      scale,
+      zIndex,
+      breatheDuration,
+      breatheDelay,
+      driftY,
+      driftRotate,
+      entryDelay,
+      entryRotateOffset,
+      hoverDelay,
+      hoverTilt
+    }
+  })
+}
+
 export function ArchiveTimeline() {
   const containerRef = useRef<HTMLDivElement>(null)
   const connectorRef = useRef<HTMLDivElement>(null)
+
+  const [activePolaroid, setActivePolaroid] = useState<{
+    locationId: string;
+    cardIndex: number;
+    card: PolaroidLayoutCard;
+  } | null>(null)
+
+  const activeLocation = activePolaroid
+    ? LOCATIONS_DATA.find((l) => l.id === activePolaroid.locationId)
+    : null
+
+  const locationCards = activeLocation ? getPolaroidsForLocation(activeLocation) : []
+
+  const handleNext = () => {
+    if (!activePolaroid || locationCards.length === 0) return
+    const nextIdx = (activePolaroid.cardIndex + 1) % locationCards.length
+    setActivePolaroid({
+      locationId: activePolaroid.locationId,
+      cardIndex: nextIdx,
+      card: locationCards[nextIdx]
+    })
+  }
+
+  const handlePrev = () => {
+    if (!activePolaroid || locationCards.length === 0) return
+    const prevIdx = (activePolaroid.cardIndex - 1 + locationCards.length) % locationCards.length
+    setActivePolaroid({
+      locationId: activePolaroid.locationId,
+      cardIndex: prevIdx,
+      card: locationCards[prevIdx]
+    })
+  }
+
+  // Handle keyboard events (Esc, ArrowRight, ArrowLeft)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setActivePolaroid(null)
+      } else if (e.key === 'ArrowRight') {
+        handleNext()
+      } else if (e.key === 'ArrowLeft') {
+        handlePrev()
+      }
+    }
+
+    if (activePolaroid) {
+      window.addEventListener('keydown', handleKeyDown)
+    }
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [activePolaroid, locationCards])
+
+  // Dispatch custom event to lock scroll
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent('lightbox-toggle', {
+        detail: { open: !!activePolaroid }
+      })
+    )
+  }, [activePolaroid])
 
   useEffect(() => {
     const updateConnectorLine = () => {
@@ -229,6 +571,9 @@ export function ArchiveTimeline() {
               key={loc.id}
               loc={loc}
               isFinal={index === LOCATIONS_DATA.length - 1}
+              onCardClick={(cardIndex, card) => setActivePolaroid({ locationId: loc.id, cardIndex, card })}
+              activeCardIndex={activePolaroid?.locationId === loc.id ? activePolaroid.cardIndex : undefined}
+              activeLocationId={activePolaroid?.locationId}
             />
           ))}
         </div>
@@ -288,11 +633,120 @@ export function ArchiveTimeline() {
           </div>
         </motion.div>
       </footer>
+
+      {/* Lightbox / Gallery Portal */}
+      <AnimatePresence>
+        {activePolaroid && activeLocation && (
+          <div className="lightbox-portal-root">
+            {/* Dark glass backdrop */}
+            <motion.div
+              className="glass-overlay"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1] }}
+              onClick={() => setActivePolaroid(null)}
+            />
+
+            <div className="lightbox-content-container">
+              {/* Left Navigation Arrow */}
+              <button 
+                className="lightbox-nav-btn prev-btn" 
+                onClick={handlePrev}
+                aria-label="Previous image"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+              </button>
+
+              {/* Centered Enlarged Polaroid Card */}
+              <div className="polaroid-wrapper-enlarged">
+                <motion.div
+                  layoutId={`polaroid-card-${activePolaroid.locationId}-${activePolaroid.cardIndex}`}
+                  className="polaroid-card-enlarged"
+                  onClick={() => setActivePolaroid(null)}
+                  transition={{
+                    type: 'spring',
+                    stiffness: 90,
+                    damping: 15,
+                    mass: 1.1
+                  }}
+                >
+                  <div className="polaroid-image-frame-enlarged">
+                    {activePolaroid.card.imageUrl ? (
+                      <img
+                        src={activePolaroid.card.imageUrl}
+                        alt={activePolaroid.card.caption}
+                        className="polaroid-img-enlarged"
+                      />
+                    ) : (
+                      <div className="polaroid-img-placeholder-enlarged" />
+                    )}
+                  </div>
+                  <div className="polaroid-caption-strip-enlarged">
+                    {activePolaroid.card.caption}
+                  </div>
+                </motion.div>
+
+                {/* Info Panel under the Polaroid card */}
+                <motion.div 
+                  className="lightbox-info-panel"
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 15 }}
+                  transition={{ delay: 0.15, duration: 0.4 }}
+                >
+                  <div className="lightbox-location-badge">
+                    <img src="/assets/current_location.svg" className="lightbox-location-icon" alt="Location" />
+                    <span>{activeLocation.name}, {activeLocation.state}</span>
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* Right Navigation Arrow */}
+              <button 
+                className="lightbox-nav-btn next-btn" 
+                onClick={handleNext}
+                aria-label="Next image"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+            </div>
+
+            {/* Close Button at Top Right of Screen */}
+            <button 
+              className="lightbox-close-btn" 
+              onClick={() => setActivePolaroid(null)}
+              aria-label="Close gallery"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
 
-function TimelineItem({ loc, isFinal }: { loc: LocationEntry; isFinal: boolean }) {
+function TimelineItem({ 
+  loc, 
+  isFinal, 
+  onCardClick,
+  activeCardIndex,
+  activeLocationId
+}: { 
+  loc: LocationEntry; 
+  isFinal: boolean; 
+  onCardClick: (cardIndex: number, card: PolaroidLayoutCard) => void;
+  activeCardIndex?: number;
+  activeLocationId?: string;
+}) {
   const itemRef = useRef<HTMLDivElement>(null)
   const isThemeBlack = loc.bgType === 'bg-theme-black'
   
@@ -319,106 +773,7 @@ function TimelineItem({ loc, isFinal }: { loc: LocationEntry; isFinal: boolean }
     }
   }
 
-  // Pre-calculate stable random values for the polaroid cards in this stack (12 to 15 cards)
-  const rand = getSeededRandom(loc.id)
-  const memoriesCount = loc.polaroids.length
-  
-  // Collage size of 12-15 polaroids
-  const count = 12 + Math.floor(rand() * 4) // deterministic count: 12, 13, 14, or 15 polaroids
-
-  // Deterministically shuffle stacking order (z-indices) using seeded Fisher-Yates
-  const zIndices = Array.from({ length: count }, (_, i) => i + 1)
-  for (let i = count - 1; i > 0; i--) {
-    const j = Math.floor(rand() * (i + 1));
-    [zIndices[i], zIndices[j]] = [zIndices[j], zIndices[i]]
-  }
-
-  const polaroidsWithLayout = Array.from({ length: count }).map((_, pIndex) => {
-    const memoryIndex = pIndex % memoriesCount
-    const memory = loc.polaroids[memoryIndex]
-    
-    // We define a set of 8 distinct target layout zones to scatter cards across the screen.
-    const zones = [
-      [-320, -180, 120, 240],  // Zone 0: Beneath CTA (Bottom Left of Collage) -> Shifted right & down
-      [-180, -60, 80, 180],    // Zone 1: Left-Center (Lower middle-left) -> Shifted right & down
-      [-60, 60, 20, 120],      // Zone 2: Center Pile (Main stack)
-      [60, 180, -140, 60],     // Zone 3: Right-Center (Beside text, slightly right)
-      [180, 320, -80, 80],     // Zone 4: Far Right (Near right viewport edge)
-      [120, 240, 140, 260],    // Zone 5: Bottom Right (Close to bottom curve)
-      [180, 300, -240, -120],  // Zone 6: Top Right (Slightly upward, far to the right of title)
-      [-80, 80, 40, 140]       // Zone 7: Center Pile 2 (Overlaying center)
-    ]
-    
-    // Distribute card indices across the zones to cover all directions
-    let zoneIndex = pIndex % zones.length
-    if (pIndex >= zones.length) {
-      zoneIndex = Math.floor(rand() * zones.length)
-    }
-    
-    const zone = zones[zoneIndex]
-    
-    // Seeded random coordinates within the zone boundaries
-    const offsetX = zone[0] + rand() * (zone[1] - zone[0])
-    const offsetY = zone[2] + rand() * (zone[3] - zone[2])
-    
-    // Small random rotation range: -18deg to +18deg
-    const rotation = -18 + rand() * 36
-    
-    // Subtle scale variation around 95% to 105%
-    const scale = 0.95 + rand() * 0.10
-    
-    const zIndex = zIndices[pIndex]
-    
-    // Floating idle animation configurations
-    const breatheDuration = 6 + rand() * 4
-    const breatheDelay = -rand() * breatheDuration
-    const driftY = 1.5 + rand() * 1.5
-    const driftRotate = 0.3 + rand() * 0.5
-
-    // Staggered entry delay and initial drop rotation offset
-    const entryDelay = pIndex * 0.08
-    const entryRotateOffset = -20 + rand() * 40
-    
-    // Hover variables
-    const hoverDelay = (count - 1 - pIndex) * 0.012
-    const hoverTilt = (rand() * 3 - 1.5) * (pIndex / count)
-    
-    return {
-      caption: memory.caption,
-      imageUrl: memory.imageUrl,
-      offsetX,
-      offsetY,
-      rotation,
-      scale,
-      zIndex,
-      breatheDuration,
-      breatheDelay,
-      driftY,
-      driftRotate,
-      entryDelay,
-      entryRotateOffset,
-      hoverDelay,
-      hoverTilt
-    }
-  })
-
-  interface PolaroidLayoutCard {
-    caption: string;
-    imageUrl?: string;
-    offsetX: number;
-    offsetY: number;
-    rotation: number;
-    scale: number;
-    zIndex: number;
-    breatheDuration: number;
-    breatheDelay: number;
-    driftY: number;
-    driftRotate: number;
-    entryDelay: number;
-    entryRotateOffset: number;
-    hoverDelay: number;
-    hoverTilt: number;
-  }
+  const polaroidsWithLayout = getPolaroidsForLocation(loc)
 
   // Framer Motion staggered spring drop-in animation configurations
   const cardVariants = {
@@ -492,12 +847,14 @@ function TimelineItem({ loc, isFinal }: { loc: LocationEntry; isFinal: boolean }
               {polaroidsWithLayout.map((card, idx) => (
                 <motion.div
                   key={idx}
+                  layoutId={`polaroid-card-${loc.id}-${idx}`}
                   className="polaroid-card-item"
                   custom={card}
                   variants={cardVariants}
                   initial="hidden"
                   whileInView="visible"
                   viewport={{ once: true, margin: "-80px" }}
+                  onClick={() => onCardClick(idx, card)}
                   style={{
                     zIndex: card.zIndex,
                     '--hover-delay': `${card.hoverDelay}s`,
@@ -506,6 +863,9 @@ function TimelineItem({ loc, isFinal }: { loc: LocationEntry; isFinal: boolean }
                     '--offset-y': `${card.offsetY}px`,
                     '--rotation': `${card.rotation}deg`,
                     '--scale': card.scale,
+                    cursor: 'pointer',
+                    opacity: (activeLocationId === loc.id && activeCardIndex === idx) ? 0 : 1,
+                    pointerEvents: activeLocationId ? 'none' : 'auto'
                   } as React.CSSProperties}
                 >
                   <div

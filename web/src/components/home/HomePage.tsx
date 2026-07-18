@@ -39,6 +39,24 @@ export function HomePage() {
     }
   }, [])
 
+  useEffect(() => {
+    const handleLightboxToggle = (e: Event) => {
+      const customEvent = e as CustomEvent
+      if (customEvent.detail?.open) {
+        lenisRef.current?.stop()
+        document.body.style.overflow = 'hidden'
+      } else {
+        lenisRef.current?.start()
+        document.body.style.overflow = 'auto'
+      }
+    }
+
+    window.addEventListener('lightbox-toggle', handleLightboxToggle)
+    return () => {
+      window.removeEventListener('lightbox-toggle', handleLightboxToggle)
+    }
+  }, [])
+
   const handleBackToMap = () => {
     lenisRef.current?.scrollTo(0, { duration: 1.2 })
   }
