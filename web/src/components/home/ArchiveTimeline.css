@@ -81,14 +81,14 @@
   z-index: 2;
 }
 
-/* When there's a top curve, the solid black block starts 40vh down */
+/* When there's a top curve, the solid black block starts 50vh down */
 .black-bg-wrapper.has-top-curve::before {
-  top: 40vh;
+  top: 80vh;
 }
 
-/* When there's a bottom curve, the solid black block ends 40vh before the bottom */
+/* When there's a bottom curve, the solid black block ends 50vh before the bottom */
 .black-bg-wrapper.has-bottom-curve::before {
-  bottom: 40vh;
+  bottom: 80vh;
 }
 
 /* Top black curve: a giant ellipse peaking at top center */
@@ -98,7 +98,7 @@
   left: 50%;
   transform: translateX(-50%);
   width: 130vw;
-  height: 80vh;
+  height: 100vh;
   border-radius: 50%;
   background-color: #000000;
   z-index: 3;
@@ -111,7 +111,7 @@
   left: 50%;
   transform: translateX(-50%);
   width: 130vw;
-  height: 80vh;
+  height: 120vh;
   border-radius: 50%;
   background-color: #000000;
   z-index: 3;
@@ -347,42 +347,125 @@
   background-color: transparent;
 }
 
-.archive-footer {
+.archive-footer-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 885px;
+  position: relative;
+}
+
+/* Handcrafted Heart Wrapper */
+.footer-heart-wrapper {
+  margin-bottom: 44px; /* Figma spacing between bottom of heart and text */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer-heart-svg {
+  width: 69px;
+  height: 69px;
+  cursor: pointer;
+  display: block;
+  transform-origin: center center;
+  animation: gentleHeartbeat 2.8s ease-in-out infinite;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.footer-heart-svg:hover {
+  animation: gentleHeartbeatHover 2.8s ease-in-out infinite, heartGlow 2.8s ease-in-out infinite;
+}
+
+/* Keyframes for Heartbeat (Normal: Scale 1 -> 1.08 -> 1) */
+@keyframes gentleHeartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+/* Keyframes for Heartbeat Hover (Hover: Scale 1.1 -> 1.18 -> 1.1) */
+@keyframes gentleHeartbeatHover {
+  0%, 100% {
+    transform: scale(1.1);
+  }
+  50% {
+    transform: scale(1.18);
+  }
+}
+
+/* Keyframes for Hover Red Glow (Fades in and out) */
+@keyframes heartGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 2px rgba(197, 41, 41, 0.2));
+  }
+  50% {
+    filter: drop-shadow(0 0 10px rgba(197, 41, 41, 0.8));
+  }
+}
+
+/* Content Row (Text & Arrow) */
+.footer-content-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px; /* Figma gap between text and arrow */
+  width: 100%;
+}
+
+.footer-text-link {
   font-family: "Figma Hand", "Bradley Hand", "Architects Daughter", cursive;
   font-size: 24px;
   font-weight: 700;
-  color: #888888;
+  color: #000000;
   text-decoration: none;
+  line-height: 29px; /* Matches Figma text unit height */
+  letter-spacing: -0.5px;
   cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.footer-text-link:hover {
+  opacity: 0.7;
+}
+
+.footer-arrow-wrapper {
   display: flex;
   align-items: center;
-  gap: 8px;
-  transition: color 0.3s ease, transform 0.3s ease;
+  justify-content: center;
 }
 
-.archive-footer:hover {
-  color: #000000;
-  transform: translateY(-2px);
+.footer-arrow-svg {
+  width: 24px;
+  height: 18px;
+  display: block;
+  transform-origin: center center;
+  animation: floatAndRotateArrow 2.2s ease-in-out infinite;
 }
 
-.heart-icon {
-  color: #ff3366; /* heart color */
-  display: inline-block;
-  font-style: normal;
-  transition: transform 0.3s ease;
+/* Keyframes for Arrow (Subtle floating + rotation ±2 deg) */
+@keyframes floatAndRotateArrow {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(2deg);
+  }
 }
 
-@keyframes heartbeat {
-  0% { transform: scale(1); }
-  20% { transform: scale(1.25); }
-  40% { transform: scale(1); }
-  60% { transform: scale(1.25); }
-  80% { transform: scale(1); }
-  100% { transform: scale(1); }
-}
-
-.archive-footer:hover .heart-icon {
-  animation: heartbeat 1.2s infinite ease-in-out;
+/* Accessibility: Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .footer-heart-svg {
+    animation: none !important;
+  }
+  .footer-arrow-svg {
+    animation: none !important;
+  }
 }
 
 /* Responsive adjustments */
