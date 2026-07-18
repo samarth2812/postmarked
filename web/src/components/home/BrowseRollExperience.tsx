@@ -129,7 +129,7 @@ export function BrowseRollExperience({
       const ejectionTimer = window.setTimeout(() => {
         setStep('ejected')
         setShowHeroCard(true)
-      }, 2000)
+      }, 2200)
       addTimer(ejectionTimer)
       return () => clearTimeout(ejectionTimer)
     }
@@ -206,12 +206,6 @@ export function BrowseRollExperience({
     mass: 1.15
   }
 
-  // Deceleration easing curve for Polaroid ejection rollers
-  const polaroidEjectionTransition = {
-    duration: 2.0,
-    ease: [0.16, 1, 0.3, 1]
-  }
-
   return createPortal(
     <div className="browse-experience-root">
       {/* Frosted Glass Overlay */}
@@ -248,17 +242,21 @@ export function BrowseRollExperience({
               {!showHeroCard && (
                 <motion.div
                   layoutId="active-polaroid-card"
-                  className="polaroid-card"
+                  className="experience-polaroid-card"
                   initial={{ y: '-100%', opacity: 0 }}
                   animate={
                     step === 'ejecting' || step === 'ejected'
                       ? {
-                          y: '-5%',
+                          y: ["-97%", "-92%", "-92%", "-4%", "-5%"],
                           opacity: 1,
                           rotate: [0, -0.4, 0.4, -0.2, 0.2, 0],
                           scaleX: [1, 0.997, 1.003, 1],
                           transition: {
-                            y: polaroidEjectionTransition,
+                            y: {
+                              duration: 2.2,
+                              times: [0, 0.1, 0.22, 0.94, 1.0],
+                              ease: ["easeOut", "linear", [0.25, 0.46, 0.45, 0.94], "easeOut"]
+                            },
                             rotate: { duration: 1.8, ease: 'easeInOut' },
                             scaleX: { duration: 1.8, ease: 'easeInOut' }
                           }
@@ -341,7 +339,7 @@ export function BrowseRollExperience({
           <div className="hero-polaroid-stage">
             <motion.div
               layoutId="active-polaroid-card"
-              className="polaroid-card hero-card"
+              className="experience-polaroid-card hero-card"
               animate={
                 exitDirection === 'left'
                   ? { x: '-120vw', rotate: -15, transition: { duration: 0.6, ease: 'easeIn' } }
@@ -397,15 +395,18 @@ export function BrowseRollExperience({
                 )}
               </div>
 
-              {/* Handwritten caption strip on the bottom white margin */}
-              <div className="polaroid-caption-strip">
-                <motion.span
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: isDeveloped ? 1 : revealProgress / 100 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  {activePhoto.caption}
-                </motion.span>
+              {/* Pure CSS format label & caption area matching the timeline */}
+              <div className="polaroid-label-area-hero">
+                <div className="polaroid-format-label-hero">Postmarked Archive Film</div>
+                <div className="polaroid-caption-strip-hero">
+                  <motion.span
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: isDeveloped ? 1 : revealProgress / 100 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    {activePhoto.caption}
+                  </motion.span>
+                </div>
               </div>
             </motion.div>
 

@@ -125,49 +125,36 @@
   top: 88.5%; /* aligns with middle of slot */
   left: 0;
   width: 100%;
-  height: 100%;
+  height: 120%; /* extended height for larger card scale */
   overflow: hidden;
   pointer-events: none;
   z-index: 6; /* sits in front of the camera body (z-index 5) */
 }
 
-/* Polaroid Card styled as stiff photo paper */
-.polaroid-card {
+/* Scoped Polaroid Card style: white background, clean border, soft shadow. Avoids global .polaroid-card clash! */
+.experience-polaroid-card {
   position: absolute;
-  left: 49.6%;
+  left: 50%;
   transform: translateX(-50%);
-  width: 33.5%;
-  aspect-ratio: 1 / 1.59;
-  background: #fdfdfc; /* warm offset-white paper texture color */
-  border-radius: 4px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22), 
-              0 2px 6px rgba(0, 0, 0, 0.12);
-  padding: 4.8%;
+  width: 76%; /* enlarged size: occupies 76% of slot width (approx 365px wide) */
+  aspect-ratio: 1233 / 1484; /* matching design aspect ratio */
+  background: #ffffff;
+  border-radius: 2px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  padding: 4.35% 4.35% 15% 4.35%; /* bottom padding increased to accommodate labels */
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   pointer-events: none;
-  transform-origin: top center; /* swings naturally from the slot rollers */
+  transform-origin: top center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
 }
 
-.polaroid-card::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 14%;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.04), transparent);
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
-}
-
-/* Blank pitch-black photograph area */
+/* Image area inside Polaroid matching 1.05 aspect ratio, with bottom black backing border */
 .polaroid-image-area {
   width: 100%;
-  aspect-ratio: 1 / 1.35;
+  aspect-ratio: 1.05;
   background: #090909;
-  border-radius: 1px;
   box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.95);
   position: relative;
   overflow: hidden;
@@ -186,19 +173,23 @@
   pointer-events: none;
 }
 
-/* Polaroid card scaled to fill 60% of viewport height */
-.polaroid-card.hero-card {
+/* Scoped hero card styled in pure CSS, scaling to 60vh height */
+.experience-polaroid-card.hero-card {
   position: relative;
   left: auto;
   top: auto;
   transform: none;
   width: auto;
   height: 60vh; /* Hero element scale: 60% of viewport height */
-  aspect-ratio: 1 / 1.59;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35),
-              0 4px 15px rgba(0, 0, 0, 0.2);
+  aspect-ratio: 1233 / 1484;
+  background: #ffffff;
+  padding: 2.2vh 2.2vh 8vh 2.2vh; /* proportional layout padding scaled to card height */
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  border-radius: 2px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35),
+              0 10px 20px rgba(0, 0, 0, 0.20);
   z-index: 10;
-  pointer-events: auto; /* make card interface interactable */
+  pointer-events: auto;
   transform-origin: top center;
   transition: box-shadow 0.3s ease;
 }
@@ -274,24 +265,37 @@
   }
 }
 
-/* Cursive handwritten caption strip in bottom white margin */
-.polaroid-caption-strip {
-  flex-grow: 1;
+/* Printed label area inside the bottom white border (hero view) */
+.polaroid-label-area-hero {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding-top: 3%;
+  flex-grow: 1;
+  padding-top: 1vh;
   box-sizing: border-box;
 }
 
-.polaroid-caption-strip span {
+.polaroid-format-label-hero {
+  font-family: "Courier New", Courier, monospace;
+  font-size: clamp(8px, 1.2vh, 12px);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(0, 0, 0, 0.32);
+  text-align: center;
+  margin-bottom: 0.5vh;
+}
+
+.polaroid-caption-strip-hero span {
   font-family: "Caveat", "Architects Daughter", "Figma Hand", "Bradley Hand", cursive;
-  font-size: clamp(22px, 3.8vh, 32px);
+  font-size: clamp(20px, 3.5vh, 30px);
   font-weight: 500;
   color: #242424;
   text-align: center;
   transform: rotate(-1.5deg); /* natural off-axis writing slope */
   line-height: 1;
+  display: block;
 }
 
 /* Sub-text description box beneath Polaroid card */

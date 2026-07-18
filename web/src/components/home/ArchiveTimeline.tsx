@@ -687,8 +687,11 @@ export function ArchiveTimeline() {
                       <div className="polaroid-img-placeholder-enlarged" />
                     )}
                   </div>
-                  <div className="polaroid-caption-strip-enlarged">
-                    {activePolaroid.card.caption}
+                  <div className="polaroid-label-area-enlarged">
+                    <div className="polaroid-format-label-enlarged">Postmarked Archive Film</div>
+                    <div className="polaroid-caption-strip-enlarged">
+                      {activePolaroid.card.caption}
+                    </div>
                   </div>
                 </motion.div>
 
@@ -898,8 +901,11 @@ function TimelineItem({
                         <div className="polaroid-img-placeholder" />
                       )}
                     </div>
-                    <div className="polaroid-caption-strip">
-                      {card.caption}
+                    <div className="polaroid-label-area">
+                      <div className="polaroid-format-label">Postmarked Archive Film</div>
+                      <div className="polaroid-caption-strip">
+                        {card.caption}
+                      </div>
                     </div>
                   </div>
                 </motion.div>

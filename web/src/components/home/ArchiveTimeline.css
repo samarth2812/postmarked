@@ -311,15 +311,14 @@
   z-index: 100 !important;
 }
 
-/* Individual Polaroid Card Visual Body: Handles styles, shadows & lift transitions */
 .polaroid-card-inner {
   width: 100%;
   height: 100%;
   background: #ffffff;
-  padding: 8px 8px 24px 8px;
-  border-radius: 1px;
-  border: 1px solid rgba(0, 0, 0, 0.03);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02); /* clean resting shadow */
+  padding: 8px 8px 30px 8px; /* updated padding to clear spacing for black strip and printed labels */
+  border-radius: 2px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02); /* clean resting shadow */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -360,15 +359,36 @@
   background: linear-gradient(135deg, #eae6df 0%, #dfd9cf 100%);
 }
 
+/* Polaroid label area formatting */
+.polaroid-label-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+  padding-top: 4px;
+}
+
+.polaroid-format-label {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 7px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(0, 0, 0, 0.32);
+  text-align: center;
+  margin-bottom: 2px;
+}
+
 /* Polaroid handwritten caption strip */
 .polaroid-caption-strip {
   font-family: "Caveat", "Architects Daughter", "Figma Hand", "Bradley Hand", cursive;
-  font-size: 19px; /* Caveat font is slightly smaller, so 19px is legible and realistic */
+  font-size: 20px;
   font-weight: 500;
-  color: rgba(0, 0, 0, 0.75);
+  color: #333333;
   text-align: center;
   line-height: 1.1;
-  margin-top: 8px;
+  margin-bottom: 2px;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -674,13 +694,12 @@
   width: 460px;
   height: 560px;
   background: #ffffff;
-  padding: 16px 16px 48px 16px;
-  border-radius: 1px;
+  padding: 16px 16px 56px 16px;
+  border-radius: 2px;
   border: 1px solid rgba(0, 0, 0, 0.04);
-  /* Deep layered drop shadows simulating elevation */
-  box-shadow: 0 35px 90px rgba(0, 0, 0, 0.45),
-              0 15px 35px rgba(0, 0, 0, 0.25),
-              0 0 1px rgba(0, 0, 0, 0.1);
+  /* Deep layered box shadows simulating elevation */
+  box-shadow: 0 35px 90px rgba(0, 0, 0, 0.4),
+              0 15px 35px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -709,11 +728,31 @@
   background: linear-gradient(135deg, #eae6df 0%, #dfd9cf 100%);
 }
 
+.polaroid-label-area-enlarged {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+  padding-top: 8px;
+}
+
+.polaroid-format-label-enlarged {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(0, 0, 0, 0.32);
+  text-align: center;
+  margin-bottom: 4px;
+}
+
 .polaroid-caption-strip-enlarged {
   font-family: "Caveat", "Architects Daughter", "Figma Hand", "Bradley Hand", cursive;
-  font-size: 34px;
+  font-size: 26px;
   font-weight: 500;
-  color: rgba(0, 0, 0, 0.85);
+  color: #333333;
   text-align: center;
   line-height: 1.1;
   margin-top: 16px;
