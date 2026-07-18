@@ -293,51 +293,25 @@
   position: relative;
   width: 100%;
   height: 100%;
-  transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
   transform-origin: center center;
 }
-
-/* Hovering anywhere over the collage container lifts and scales the stack */
-.polaroid-card-stack:hover {
-  transform: translateY(-4px) scale(1.01); /* very subtle stack lift */
-}
-
-/* Individual Polaroid Card Outer Wrapper: Handles layout positions & hover transitions */
+/* Individual Polaroid Card Outer Wrapper: Handles layout positions */
 .polaroid-card-item {
   position: absolute;
   width: 230px; /* Increased polaroid size by ~40% area */
   height: 280px; /* Increased polaroid height */
   will-change: transform;
   transform-origin: center center;
-  transition: transform 0.7s cubic-bezier(0.25, 1, 0.5, 1);
-  cursor: default;
+  /* NO transition on transform here, as it conflicts with Framer Motion's entrance/exit animations! */
+  cursor: pointer;
 }
 
-/* When the collage container is hovered, lift individual cards slightly and apply tilts */
-.polaroid-card-stack:hover .polaroid-card-item {
-  /* Transition delay is configured dynamically in React via --hover-delay */
-  transition-delay: var(--hover-delay);
-  
-  /* Apply slight lift and tilt. Tilt angle (--hover-tilt) calculated in React */
-  transform: translate3d(var(--offset-x), calc(var(--offset-y) - 6px), 0)
-             rotate(calc(var(--rotation) + var(--hover-tilt)))
-             scale(calc(var(--scale) * 1.01));
-}
-
-/* Hovering a single visible polaroid card directly */
+/* Hovering a single visible polaroid card directly - lift wrapper z-index */
 .polaroid-card-item:hover {
-  /* Lift card slightly, rotate a tiny amount, stronger shadow, z-index to top, and instant transition */
-  transform: translate3d(var(--offset-x), calc(var(--offset-y) - 6px), 0)
-             rotate(calc(var(--rotation) + 1.5deg))
-             scale(1.025) !important;
   z-index: 100 !important;
-  
-  /* Clear hover delay and speed up response for direct interaction */
-  transition-delay: 0s !important;
-  transition-duration: 0.25s !important;
 }
 
-/* Individual Polaroid Card Visual Body: Handles styles, shadows & continuous idle animation */
+/* Individual Polaroid Card Visual Body: Handles styles, shadows & lift transitions */
 .polaroid-card-inner {
   width: 100%;
   height: 100%;
@@ -345,27 +319,21 @@
   padding: 8px 8px 24px 8px;
   border-radius: 1px;
   border: 1px solid rgba(0, 0, 0, 0.03);
-  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.05), 0 1px 4px rgba(0, 0, 0, 0.02); /* soft layered shadow */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02); /* clean resting shadow */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   will-change: transform;
   transform-origin: center center;
-  transition: box-shadow 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+  /* Hover transition is handled strictly on the inner card container */
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1),
+              box-shadow 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-/* Deepen shadows on stack hover */
-.polaroid-card-stack:hover .polaroid-card-inner {
-  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.09), 0 4px 12px rgba(0, 0, 0, 0.04);
-  /* Delayed shadow response to match layout wave */
-  transition-delay: var(--hover-delay);
-}
-
-/* Extremely deep shadow when card is directly hovered */
+/* Lift and tilt the inner body when hovered directly */
 .polaroid-card-item:hover .polaroid-card-inner {
-  box-shadow: 0 28px 55px rgba(0, 0, 0, 0.18), 0 10px 22px rgba(0, 0, 0, 0.08);
-  transition-delay: 0s !important;
-  transition-duration: 0.25s !important;
+  transform: translateY(-8px) rotate(1deg) scale(1.015);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12), 0 8px 16px rgba(0, 0, 0, 0.06);
 }
 
 /* Image area frame inside Polaroid */
@@ -405,19 +373,6 @@
   text-overflow: ellipsis;
   overflow: hidden;
   letter-spacing: -0.2px;
-}
-
-/* Idle Floating Motion for Polaroid Cards */
-@keyframes polaroidIdleAnimation {
-  0%, 100% {
-    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
-  }
-  50% {
-    /* drift-y and drift-rotate variables passed from React for unique motion per card */
-    transform: translate3d(0, calc(-1 * var(--drift-y)), 0)
-               rotate(var(--drift-rotate))
-               scale(1.008);
-  }
 }
 
 /* Signature Footer Section */

@@ -378,14 +378,12 @@ export interface PolaroidLayoutCard {
   rotation: number;
   scale: number;
   zIndex: number;
-  breatheDuration: number;
-  breatheDelay: number;
-  driftY: number;
-  driftRotate: number;
+  dropDistance: number;
+  stiffness: number;
+  damping: number;
+  mass: number;
   entryDelay: number;
   entryRotateOffset: number;
-  hoverDelay: number;
-  hoverTilt: number;
 }
 
 export function getPolaroidsForLocation(loc: LocationEntry): PolaroidLayoutCard[] {
@@ -423,18 +421,21 @@ export function getPolaroidsForLocation(loc: LocationEntry): PolaroidLayoutCard[
     const zone = zones[zoneIndex]
     const offsetX = zone[0] + rand() * (zone[1] - zone[0])
     const offsetY = zone[2] + rand() * (zone[3] - zone[2])
-    const rotation = -18 + rand() * 36
-    const scale = 0.95 + rand() * 0.10
+    const rotation = -12 + rand() * 24 // calmer layout rotation range
+    const scale = 0.97 + rand() * 0.06 // tighter scale variation
     const zIndex = zIndices[pIndex]
     
-    const breatheDuration = 6 + rand() * 4
-    const breatheDelay = -rand() * breatheDuration
-    const driftY = 1.5 + rand() * 1.5
-    const driftRotate = 0.3 + rand() * 0.5
-    const entryDelay = pIndex * 0.08
-    const entryRotateOffset = -20 + rand() * 40
-    const hoverDelay = (count - 1 - pIndex) * 0.012
-    const hoverTilt = (rand() * 3 - 1.5) * (pIndex / count)
+    // Physical drop parameters: 40px to 80px drop height
+    const dropDistance = 40 + rand() * 40
+    
+    // Calmer, deliberate spring values: low stiffness, high damping (highly damped settle)
+    const stiffness = 50 + rand() * 15
+    const damping = 22 + rand() * 6
+    const mass = 1.0 + rand() * 0.3
+    
+    // Staggered timing: 70ms to 100ms cadence between cards
+    const entryDelay = 0.07 * pIndex + rand() * 0.03
+    const entryRotateOffset = -10 + rand() * 20
     
     return {
       caption: memory.caption,
@@ -445,14 +446,12 @@ export function getPolaroidsForLocation(loc: LocationEntry): PolaroidLayoutCard[
       rotation,
       scale,
       zIndex,
-      breatheDuration,
-      breatheDelay,
-      driftY,
-      driftRotate,
+      dropDistance,
+      stiffness,
+      damping,
+      mass,
       entryDelay,
-      entryRotateOffset,
-      hoverDelay,
-      hoverTilt
+      entryRotateOffset
     }
   })
 }
@@ -780,9 +779,9 @@ function TimelineItem({
     hidden: (card: PolaroidLayoutCard) => ({
       opacity: 0,
       x: card.offsetX,
-      y: card.offsetY - 200,
+      y: card.offsetY - card.dropDistance,
       rotate: card.rotation + card.entryRotateOffset,
-      scale: card.scale * 0.8
+      scale: card.scale * 0.95
     }),
     visible: (card: PolaroidLayoutCard) => ({
       opacity: 1,
@@ -792,9 +791,9 @@ function TimelineItem({
       scale: card.scale,
       transition: {
         type: 'spring' as const,
-        stiffness: 85,
-        damping: 14,
-        mass: 1.1,
+        stiffness: card.stiffness,
+        damping: card.damping,
+        mass: card.mass,
         delay: card.entryDelay
       }
     })
@@ -857,8 +856,6 @@ function TimelineItem({
                   onClick={() => onCardClick(idx, card)}
                   style={{
                     zIndex: card.zIndex,
-                    '--hover-delay': `${card.hoverDelay}s`,
-                    '--hover-tilt': `${card.hoverTilt}deg`,
                     '--offset-x': `${card.offsetX}px`,
                     '--offset-y': `${card.offsetY}px`,
                     '--rotation': `${card.rotation}deg`,
@@ -868,15 +865,7 @@ function TimelineItem({
                     pointerEvents: activeLocationId ? 'none' : 'auto'
                   } as React.CSSProperties}
                 >
-                  <div
-                    className="polaroid-card-inner"
-                    style={{
-                      animation: `polaroidIdleAnimation ${card.breatheDuration}s ease-in-out infinite`,
-                      animationDelay: `${card.breatheDelay}s`,
-                      '--drift-y': `${card.driftY}px`,
-                      '--drift-rotate': `${card.driftRotate}deg`,
-                    } as React.CSSProperties}
-                  >
+                  <div className="polaroid-card-inner">
                     <div className="polaroid-image-frame">
                       {card.imageUrl ? (
                         <img 
