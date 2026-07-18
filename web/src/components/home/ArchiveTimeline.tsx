@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import './ArchiveTimeline.css'
+import { BrowseRollExperience } from './BrowseRollExperience'
 
 interface PolaroidCard {
   caption: string;
@@ -466,6 +467,8 @@ export function ArchiveTimeline() {
     card: PolaroidLayoutCard;
   } | null>(null)
 
+  const [browseRollLocation, setBrowseRollLocation] = useState<LocationEntry | null>(null)
+
   const activeLocation = activePolaroid
     ? LOCATIONS_DATA.find((l) => l.id === activePolaroid.locationId)
     : null
@@ -573,6 +576,7 @@ export function ArchiveTimeline() {
               onCardClick={(cardIndex, card) => setActivePolaroid({ locationId: loc.id, cardIndex, card })}
               activeCardIndex={activePolaroid?.locationId === loc.id ? activePolaroid.cardIndex : undefined}
               activeLocationId={activePolaroid?.locationId}
+              onBrowseRoll={(clickedLoc) => setBrowseRollLocation(clickedLoc)}
             />
           ))}
         </div>
@@ -729,6 +733,20 @@ export function ArchiveTimeline() {
           </div>
         )}
       </AnimatePresence>
+
+      {/* Browse the Roll Immersive Experience Portal */}
+      <AnimatePresence>
+        {browseRollLocation && (
+          <BrowseRollExperience
+            location={browseRollLocation}
+            onClose={() => setBrowseRollLocation(null)}
+            onShutterClick={() => console.log('Audio Hook: Shutter Click')}
+            onMotorStart={() => console.log('Audio Hook: Motor Start')}
+            onPaperEject={() => console.log('Audio Hook: Paper Eject')}
+            onPaperSlide={() => console.log('Audio Hook: Paper Slide')}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }
@@ -738,13 +756,15 @@ function TimelineItem({
   isFinal, 
   onCardClick,
   activeCardIndex,
-  activeLocationId
+  activeLocationId,
+  onBrowseRoll
 }: { 
   loc: LocationEntry; 
   isFinal: boolean; 
   onCardClick: (cardIndex: number, card: PolaroidLayoutCard) => void;
   activeCardIndex?: number;
   activeLocationId?: string;
+  onBrowseRoll: (loc: LocationEntry) => void;
 }) {
   const itemRef = useRef<HTMLDivElement>(null)
   const isThemeBlack = loc.bgType === 'bg-theme-black'
@@ -835,7 +855,7 @@ function TimelineItem({
             </motion.div>
 
             <motion.div className="browse-button-wrapper" variants={childVariants}>
-              <button className="browse-roll-cta">
+              <button className="browse-roll-cta" onClick={() => onBrowseRoll(loc)}>
                 Browse the Roll
               </button>
             </motion.div>
