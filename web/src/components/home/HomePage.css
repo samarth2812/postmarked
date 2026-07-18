@@ -192,7 +192,10 @@ font-weight: 700;
   position: absolute;
   width: 32px; /* Small, elegant size matching the Figma mock */
   height: 38px;
-  background: #ffffff;
+  background-image: url('/assets/paper.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color: #ffffff;
   padding: 2px 2px 5px 2px;
   border-radius: 0.5px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
