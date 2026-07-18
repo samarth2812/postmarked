@@ -9,7 +9,15 @@
   }
 }
 
-.home-page {
+.home-page-container {
+  position: relative;
+  width: 100%;
+  background-color: #000000; /* base page background */
+  overflow: visible;
+  user-select: none;
+}
+
+.home-hero-section {
   position: relative;
   width: 100vw;
   height: 100vh;
@@ -18,25 +26,64 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  user-select: none;
 }
 
-/* Logo placement and animation */
-.home-logo {
-  position: absolute;
+/* Fixed Archive Header */
+.fixed-archive-header {
+  position: fixed;
   top: 40px;
   left: 40px;
-  z-index: 10;
-  pointer-events: none;
+  right: 40px;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none; /* let clicks pass through empty space */
+  mix-blend-mode: difference; /* Inverts color over light backgrounds dynamically */
+}
+
+.archive-header-logo {
+  pointer-events: auto;
   opacity: 0;
   animation: fadeIn 1.5s cubic-bezier(0.25, 1, 0.5, 1) 0.2s forwards;
 }
 
-.home-logo svg {
+.archive-header-logo img {
   width: 150px;
   height: auto;
   display: block;
 }
+
+.back-to-map-wrapper {
+  pointer-events: auto;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1),
+              transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.back-to-map-wrapper.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.back-to-map-btn {
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 30px;
+font-style: normal;
+font-weight: 700;
+  color: #FFFFFF26; /* subtle grey */
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px 12px;
+  transition: color 0.3s ease;
+}
+
+.back-to-map-btn:hover {
+  color: #ffffff; /* hover transitions to white */
+}
+
 
 /* Right vertical text scrollbar container */
 .right-nav-scrollbar {
@@ -228,11 +275,7 @@
   transform: translate(-50%, -8px); /* Slide up translateY 4px -> 0 (from starting offset) */
 }
 
-/* Spacer to allow vertical page scrolling */
-.scroll-spacer {
-  height: 200vh;
-  pointer-events: none;
-}
+
 
 /* Hide standard browser scrollbar for cleaner look */
 html, body {
