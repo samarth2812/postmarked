@@ -470,7 +470,7 @@ export function BrowseRollExperience({
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.5, ease: 'easeOut' }}
               >
-                Press the shutter to reveal the first memory
+                Press the red shutter to reveal the memories
               </motion.div>
             )}
 

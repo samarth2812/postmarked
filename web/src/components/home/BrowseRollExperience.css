@@ -134,13 +134,12 @@
 /* Scoped Polaroid Card style: white background, clean border, soft shadow. Avoids global .polaroid-card clash! */
 .experience-polaroid-card {
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 12%;
   width: 76%; /* enlarged size: occupies 76% of slot width (approx 365px wide) */
   aspect-ratio: 1233 / 1484; /* matching design aspect ratio */
-  background-image: url('/assets/paper.png');
+  /* background-image: url('/assets/paper.png');
   background-size: cover;
-  background-repeat: no-repeat;
+  background-repeat: no-repeat; */
   background-color: #ffffff;
   border-radius: 2px;
   border: 1px solid rgba(0, 0, 0, 0.04);
@@ -185,9 +184,9 @@
   width: auto;
   height: 60vh; /* Hero element scale: 60% of viewport height */
   aspect-ratio: 1233 / 1484;
-  background-image: url('/assets/paper.png');
+  /* background-image: url('/assets/paper.png');
   background-size: cover;
-  background-repeat: no-repeat;
+  background-repeat: no-repeat; */
   background-color: #ffffff;
   padding: 2.2vh 2.2vh 8vh 2.2vh; /* proportional layout padding scaled to card height */
   border: 1px solid rgba(0, 0, 0, 0.04);
