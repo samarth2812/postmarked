@@ -5,7 +5,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 10000; /* above timeline headers but aligns with other portals */
+  z-index: 10000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -20,9 +20,9 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(13, 13, 13, 0.25); /* slightly darker tint for high cinematic focus */
-  backdrop-filter: blur(12px) saturate(120%);
-  -webkit-backdrop-filter: blur(12px) saturate(120%);
+  background: rgba(10, 10, 10, 0.35); /* darker cinematic vignetting */
+  backdrop-filter: blur(15px) saturate(110%);
+  -webkit-backdrop-filter: blur(15px) saturate(110%);
   z-index: 1;
   cursor: pointer;
 }
@@ -42,13 +42,13 @@
 
 /* Vibration wrapper to shake the camera when shutter clicks */
 .camera-vibration-wrapper {
-  position: relative;
-  width: min(85vw, 550px);
+  position: absolute;
+  width: min(85vw, 480px); /* slightly smaller camera scale to give generous viewport room */
   aspect-ratio: 1810 / 1487;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: -6vh; /* offset slightly upwards for visual centering with bottom labels */
+  z-index: 5;
   pointer-events: auto;
 }
 
@@ -138,7 +138,7 @@
   transform: translateX(-50%);
   width: 33.5%;
   aspect-ratio: 1 / 1.59;
-  background: #ffffff;
+  background: #fdfdfc; /* warm offset-white paper texture color */
   border-radius: 4px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22), 
               0 2px 6px rgba(0, 0, 0, 0.12);
@@ -171,6 +171,199 @@
   box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.95);
   position: relative;
   overflow: hidden;
+}
+
+/* Hero Stage centers the enlarged Polaroid card */
+.hero-polaroid-stage {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 8;
+  pointer-events: none;
+}
+
+/* Polaroid card scaled to fill 60% of viewport height */
+.polaroid-card.hero-card {
+  position: relative;
+  left: auto;
+  top: auto;
+  transform: none;
+  width: auto;
+  height: 60vh; /* Hero element scale: 60% of viewport height */
+  aspect-ratio: 1 / 1.59;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35),
+              0 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  pointer-events: auto; /* make card interface interactable */
+  transform-origin: top center;
+  transition: box-shadow 0.3s ease;
+}
+
+/* Colored photograph layer inside Polaroid */
+.polaroid-img-colored {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Black developer mask layer */
+.polaroid-developer-mask {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #090909;
+  z-index: 2;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.9);
+}
+
+/* Draggable reveal overlay / handle */
+.polaroid-drag-handle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.polaroid-drag-handle:active {
+  cursor: grabbing;
+}
+
+/* Elegant upward drag hint arrow overlay */
+.drag-indicator-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.6);
+  pointer-events: none;
+  animation: breatheArrow 2.5s infinite ease-in-out;
+}
+
+.drag-indicator-arrow span {
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-top: 4px;
+}
+
+@keyframes breatheArrow {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(-8px);
+    opacity: 0.85;
+  }
+}
+
+/* Cursive handwritten caption strip in bottom white margin */
+.polaroid-caption-strip {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 3%;
+  box-sizing: border-box;
+}
+
+.polaroid-caption-strip span {
+  font-family: "Caveat", "Architects Daughter", "Figma Hand", "Bradley Hand", cursive;
+  font-size: clamp(22px, 3.8vh, 32px);
+  font-weight: 500;
+  color: #242424;
+  text-align: center;
+  transform: rotate(-1.5deg); /* natural off-axis writing slope */
+  line-height: 1;
+}
+
+/* Sub-text description box beneath Polaroid card */
+.polaroid-description-box {
+  margin-top: 2.5vh;
+  max-width: min(85vw, 360px);
+  text-align: center;
+  font-family: "Instrument Sans", sans-serif;
+  font-size: clamp(12px, 1.6vh, 14px);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.7);
+  pointer-events: auto;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  font-weight: 400;
+}
+
+/* Elegant Navigation controls */
+.experience-navigation {
+  position: absolute;
+  bottom: 12vh;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  z-index: 20;
+  pointer-events: auto;
+}
+
+.nav-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  transition: color 0.25s, transform 0.25s;
+}
+
+.nav-btn:hover {
+  color: #ffffff;
+}
+
+.nav-btn.prev:hover {
+  transform: translateX(-3px);
+}
+
+.nav-btn.next:hover {
+  transform: translateX(3px);
+}
+
+.nav-btn span {
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.nav-btn svg {
+  display: block;
+}
+
+.nav-counter {
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.05em;
 }
 
 /* Instruction Text Overlay positioned below ejected card */
@@ -207,7 +400,7 @@
   padding: 8px;
   transition: color 0.25s ease, transform 0.25s ease;
   pointer-events: auto;
-  z-index: 10;
+  z-index: 100;
 }
 
 .experience-close-btn:hover {
@@ -223,7 +416,7 @@
 
 /* Page blur transition class for home-page-container */
 .home-page-container.blurred-under-overlay {
-  filter: blur(10px) saturate(115%);
+  filter: blur(12px) saturate(110%);
   transition: filter 500ms cubic-bezier(0.25, 1, 0.5, 1);
   pointer-events: none;
 }
@@ -232,7 +425,18 @@
 @media (max-width: 600px) {
   .camera-vibration-wrapper {
     width: min(90vw, 360px);
-    margin-top: -8vh;
+  }
+  .polaroid-card.hero-card {
+    height: 52vh; /* slightly shorter on mobile to clear nav buttons */
+  }
+  .polaroid-description-box {
+    max-width: 80vw;
+    font-size: 12px;
+    margin-top: 2vh;
+  }
+  .experience-navigation {
+    bottom: 10vh;
+    gap: 20px;
   }
   .experience-instruction {
     font-size: 11px;

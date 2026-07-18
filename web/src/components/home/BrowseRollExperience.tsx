@@ -1,14 +1,21 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useMotionValue } from 'framer-motion'
 import { CameraSvg } from './CameraSvg'
 import './BrowseRollExperience.css'
+
+interface PolaroidCard {
+  caption: string;
+  imageUrl?: string;
+  description?: string;
+}
 
 interface LocationEntry {
   id: string;
   name: string;
   state: string;
   bgType: 'bg-theme-black' | 'bg-theme-white';
+  polaroids: PolaroidCard[];
 }
 
 interface BrowseRollExperienceProps {
@@ -39,88 +46,159 @@ export function BrowseRollExperience({
 }: BrowseRollExperienceProps) {
   const [step, setStep] = useState<InteractionStep>('focus-mode')
   const [motorStarted, setMotorStarted] = useState(false)
+  const [showHeroCard, setShowHeroCard] = useState(false)
+  const [activeIndex, setActiveIndex] = useState(0)
+  const [isDeveloped, setIsDeveloped] = useState(false)
+  const [navigationVisible, setNavigationVisible] = useState(false)
+  const [exitDirection, setExitDirection] = useState<'left' | 'right' | null>(null)
+  const [revealProgress, setRevealProgress] = useState(0)
 
+  const dragY = useMotionValue(0)
+  const timersRef = useRef<number[]>([])
+
+  const addTimer = (timerId: number) => {
+    timersRef.current.push(timerId)
+  }
+
+  // Scroll lock and background blur on mount
   useEffect(() => {
-    // 1. Lock scrolling on body
     const originalOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
 
-    // Lock Lenis scroll
     window.dispatchEvent(new CustomEvent('lightbox-toggle', { detail: { open: true } }))
 
-    // 2. Blur the underlying page content
     const homePage = document.querySelector('.home-page-container')
     homePage?.classList.add('blurred-under-overlay')
 
-    // 3. Step transitions
-    // Focus overlay finishes fading in after 500ms
-    const overlayTimer = setTimeout(() => {
+    const overlayTimer = window.setTimeout(() => {
       setStep('camera-entrance')
     }, 500)
+    addTimer(overlayTimer)
 
     return () => {
       document.body.style.overflow = originalOverflow
       window.dispatchEvent(new CustomEvent('lightbox-toggle', { detail: { open: false } }))
       homePage?.classList.remove('blurred-under-overlay')
-      clearTimeout(overlayTimer)
+      timersRef.current.forEach(clearTimeout)
     }
   }, [])
 
+  // Camera entrance transitions
   useEffect(() => {
     if (step === 'camera-entrance') {
-      // Camera slide up takes ~700ms
-      const cameraTimer = setTimeout(() => {
+      const cameraTimer = window.setTimeout(() => {
         setStep('idle')
       }, 700)
+      addTimer(cameraTimer)
       return () => clearTimeout(cameraTimer)
     }
 
     if (step === 'idle') {
-      // Pause briefly for 700ms in idle state
-      const idleTimer = setTimeout(() => {
+      const idleTimer = window.setTimeout(() => {
         setStep('waiting-shutter')
       }, 700)
+      addTimer(idleTimer)
       return () => clearTimeout(idleTimer)
     }
   }, [step])
 
+  // Shutter button press sequence
   const handleShutterClick = () => {
     if (step !== 'waiting-shutter') return
 
     setStep('shutter-clicked')
-    // Trigger shutter sound hook
     onShutterClick?.()
 
-    // Trigger motor start sound hook after 200ms
-    const motorTimer = setTimeout(() => {
+    const motorTimer = window.setTimeout(() => {
       setMotorStarted(true)
       onMotorStart?.()
     }, 200)
+    addTimer(motorTimer)
 
-    // Trigger paper ejection after 400ms (200ms after motor start)
-    const ejectTimer = setTimeout(() => {
+    const ejectTimer = window.setTimeout(() => {
       setStep('ejecting')
       onPaperEject?.()
       onPaperSlide?.()
     }, 400)
-
-    return () => {
-      clearTimeout(motorTimer)
-      clearTimeout(ejectTimer)
-    }
+    addTimer(ejectTimer)
   }
 
+  // Monitor ejection end and transition to hero mode
   useEffect(() => {
     if (step === 'ejecting') {
-      // Polaroid ejection takes 2.0s
-      const ejectionTimer = setTimeout(() => {
+      const ejectionTimer = window.setTimeout(() => {
         setStep('ejected')
+        setShowHeroCard(true)
       }, 2000)
+      addTimer(ejectionTimer)
       return () => clearTimeout(ejectionTimer)
     }
   }, [step])
 
-  // Camera slide up transition spring settings
+  // Map drag distance to reveal progress of chemical development
+  useEffect(() => {
+    const unsubscribe = dragY.on('change', (latest) => {
+      // dragConstraint is 0 to -160, so divide by -160
+      const progress = Math.min(100, Math.max(0, (latest / -160) * 100))
+      setRevealProgress(progress)
+
+      if (progress >= 95) {
+        setIsDeveloped((prev) => {
+          if (!prev) {
+            // Pause 1s for appreciation before showing navigation controls
+            const navTimer = window.setTimeout(() => {
+              setNavigationVisible(true)
+            }, 1000)
+            addTimer(navTimer)
+            return true
+          }
+          return prev
+        })
+      }
+    })
+    return () => unsubscribe()
+  }, [dragY])
+
+  // Reset helper when transitioning between memories
+  const resetForNextPhoto = () => {
+    setStep('camera-entrance')
+    setShowHeroCard(false)
+    setMotorStarted(false)
+    setRevealProgress(0)
+    setIsDeveloped(false)
+    setNavigationVisible(false)
+    setExitDirection(null)
+    dragY.set(0)
+  }
+
+  // Navigate to Next Memory
+  const handleNext = () => {
+    if (exitDirection || !location.polaroids.length) return
+    setExitDirection('left')
+    const transitionTimer = window.setTimeout(() => {
+      setActiveIndex((prev) => (prev + 1) % location.polaroids.length)
+      resetForNextPhoto()
+    }, 600)
+    addTimer(transitionTimer)
+  }
+
+  // Navigate to Previous Memory
+  const handlePrev = () => {
+    if (exitDirection || !location.polaroids.length) return
+    setExitDirection('right')
+    const transitionTimer = window.setTimeout(() => {
+      setActiveIndex((prev) => (prev - 1 + location.polaroids.length) % location.polaroids.length)
+      resetForNextPhoto()
+    }, 600)
+    addTimer(transitionTimer)
+  }
+
+  // Fallback photo object
+  const activePhoto = location.polaroids && location.polaroids[activeIndex]
+    ? location.polaroids[activeIndex]
+    : { imageUrl: '', caption: '', description: '' }
+
+  // Spring settings for slide up entrance
   const cameraEntranceTransition = {
     type: 'spring',
     stiffness: 110,
@@ -128,10 +206,10 @@ export function BrowseRollExperience({
     mass: 1.15
   }
 
-  // Polaroid ejection sliding animation settings (mechanical movement)
+  // Deceleration easing curve for Polaroid ejection rollers
   const polaroidEjectionTransition = {
     duration: 2.0,
-    ease: [0.16, 1, 0.3, 1] // smooth easeOut settle
+    ease: [0.16, 1, 0.3, 1]
   }
 
   return createPortal(
@@ -143,12 +221,12 @@ export function BrowseRollExperience({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1] }}
-        onClick={step === 'waiting-shutter' || step === 'ejected' ? onClose : undefined}
+        onClick={step === 'waiting-shutter' || isDeveloped ? onClose : undefined}
       />
 
       {/* Main Interactive Stage */}
       <div className="experience-stage">
-        {/* Camera and Polaroid Container */}
+        {/* Camera Stage (rendered absolute and layered, slides down on focus change) */}
         <motion.div
           className="camera-vibration-wrapper"
           animate={
@@ -160,44 +238,50 @@ export function BrowseRollExperience({
                 }
               : {}
           }
+          style={{
+            pointerEvents: showHeroCard ? 'none' : 'auto'
+          }}
         >
           <div className="camera-relative-box">
             {/* Polaroid Ejection Slot Container */}
             <div className="polaroid-ejection-container">
-              <motion.div
-                className="polaroid-card"
-                initial={{ y: '-100%', opacity: 0 }}
-                animate={
-                  step === 'ejecting' || step === 'ejected'
-                    ? {
-                        y: '-5%',
-                        opacity: 1,
-                        rotate: [0, -0.4, 0.4, -0.2, 0.2, 0],
-                        scaleX: [1, 0.997, 1.003, 1],
-                        transition: {
-                          y: polaroidEjectionTransition,
-                          rotate: { duration: 1.8, ease: 'easeInOut' },
-                          scaleX: { duration: 1.8, ease: 'easeInOut' }
+              {!showHeroCard && (
+                <motion.div
+                  layoutId="active-polaroid-card"
+                  className="polaroid-card"
+                  initial={{ y: '-100%', opacity: 0 }}
+                  animate={
+                    step === 'ejecting' || step === 'ejected'
+                      ? {
+                          y: '-5%',
+                          opacity: 1,
+                          rotate: [0, -0.4, 0.4, -0.2, 0.2, 0],
+                          scaleX: [1, 0.997, 1.003, 1],
+                          transition: {
+                            y: polaroidEjectionTransition,
+                            rotate: { duration: 1.8, ease: 'easeInOut' },
+                            scaleX: { duration: 1.8, ease: 'easeInOut' }
+                          }
                         }
-                      }
-                    : motorStarted
-                    ? {
-                        y: '-97%',
-                        opacity: 1,
-                        transition: { duration: 0.1 }
-                      }
-                    : { y: '-100%', opacity: 0 }
-                }
-              >
-                <div className="polaroid-image-area" />
-              </motion.div>
+                      : motorStarted
+                      ? {
+                          y: '-97%',
+                          opacity: 1,
+                          transition: { duration: 0.1 }
+                        }
+                      : { y: '-100%', opacity: 0 }
+                  }
+                >
+                  <div className="polaroid-image-area" />
+                </motion.div>
+              )}
             </div>
 
             {/* Opaque Instax Camera SVG */}
             <motion.div
               className="camera-body-wrapper"
               initial={{ y: '100vh' }}
-              animate={step !== 'focus-mode' ? { y: '0vh' } : { y: '100vh' }}
+              animate={step !== 'focus-mode' && !showHeroCard ? { y: '0vh' } : { y: '100vh' }}
               transition={cameraEntranceTransition}
             >
               <CameraSvg
@@ -252,6 +336,127 @@ export function BrowseRollExperience({
           </div>
         </motion.div>
 
+        {/* Hero Polaroid Stage (fades layout in and zooms, displays in front) */}
+        {showHeroCard && (
+          <div className="hero-polaroid-stage">
+            <motion.div
+              layoutId="active-polaroid-card"
+              className="polaroid-card hero-card"
+              animate={
+                exitDirection === 'left'
+                  ? { x: '-120vw', rotate: -15, transition: { duration: 0.6, ease: 'easeIn' } }
+                  : exitDirection === 'right'
+                  ? { x: '120vw', rotate: 15, transition: { duration: 0.6, ease: 'easeIn' } }
+                  : { x: 0, rotate: 0 }
+              }
+              transition={{
+                type: 'spring',
+                stiffness: 90,
+                damping: 16,
+                mass: 1.05
+              }}
+            >
+              <div className="polaroid-image-area">
+                {/* Color Image Layer */}
+                {activePhoto.imageUrl && (
+                  <img
+                    src={activePhoto.imageUrl}
+                    alt={activePhoto.caption}
+                    className="polaroid-img-colored"
+                    style={{ opacity: isDeveloped ? 1 : revealProgress / 100 }}
+                  />
+                )}
+
+                {/* Dark chemical developer mask overlay */}
+                {!isDeveloped && (
+                  <motion.div
+                    className="polaroid-developer-mask"
+                    style={{
+                      height: `${100 - revealProgress}%`
+                    }}
+                  />
+                )}
+
+                {/* Draggable reveal handler */}
+                {!isDeveloped && (
+                  <motion.div
+                    className="polaroid-drag-handle"
+                    drag="y"
+                    dragConstraints={{ top: -160, bottom: 0 }}
+                    dragElastic={0.05}
+                    dragMomentum={false}
+                    style={{ y: dragY }}
+                  >
+                    <div className="drag-indicator-arrow">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="18 15 12 9 6 15"></polyline>
+                      </svg>
+                      <span>Drag Up</span>
+                    </div>
+                  </motion.div>
+                )}
+              </div>
+
+              {/* Handwritten caption strip on the bottom white margin */}
+              <div className="polaroid-caption-strip">
+                <motion.span
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: isDeveloped ? 1 : revealProgress / 100 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  {activePhoto.caption}
+                </motion.span>
+              </div>
+            </motion.div>
+
+            {/* Sub-text description of the memory visible below card when developed */}
+            <AnimatePresence>
+              {isDeveloped && activePhoto.description && (
+                <motion.div
+                  className="polaroid-description-box"
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 0.85, y: 0 }}
+                  exit={{ opacity: 0, y: 15 }}
+                  transition={{ delay: 0.4, duration: 0.5 }}
+                >
+                  {/* {activePhoto.description} */}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
+
+        {/* Elegant Navigation Controls */}
+        <AnimatePresence>
+          {navigationVisible && (
+            <motion.div
+              className="experience-navigation"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
+            >
+              <button className="nav-btn prev" onClick={handlePrev} aria-label="Previous memory">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+                <span>Previous</span>
+              </button>
+
+              <div className="nav-counter">
+                {activeIndex + 1} / {location.polaroids.length}
+              </div>
+
+              <button className="nav-btn next" onClick={handleNext} aria-label="Next memory">
+                <span>Next</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Text Instruction Overlay */}
         <div className="instruction-wrapper">
           <AnimatePresence mode="wait">
@@ -268,7 +473,7 @@ export function BrowseRollExperience({
               </motion.div>
             )}
 
-            {step === 'ejected' && (
+            {step === 'ejected' && !isDeveloped && (
               <motion.div
                 key="develop-hint"
                 className="experience-instruction"
