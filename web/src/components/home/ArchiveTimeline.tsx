@@ -4,6 +4,7 @@ import './ArchiveTimeline.css'
 
 interface PolaroidCard {
   caption: string;
+  imageUrl?: string;
 }
 
 interface LocationEntry {
@@ -21,10 +22,10 @@ const LOCATIONS_DATA: LocationEntry[] = [
     state: 'Tamil Nadu',
     bgType: 'bg-theme-black',
     polaroids: [
-      { caption: 'Promenade walk' },
-      { caption: 'White Town lanes' },
-      { caption: 'Auroville dome' },
-      { caption: 'By the bay' }
+      { caption: 'Promenade walk', imageUrl: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'White Town lanes', imageUrl: 'https://images.unsplash.com/photo-1603258591244-c689ba488d5e?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'Auroville dome', imageUrl: 'https://images.unsplash.com/photo-1590050752117-238cb061295a?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'By the bay', imageUrl: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=400&q=80' }
     ]
   },
   {
@@ -33,10 +34,10 @@ const LOCATIONS_DATA: LocationEntry[] = [
     state: 'Tamil Nadu',
     bgType: 'bg-theme-white',
     polaroids: [
-      { caption: 'Marina waves' },
-      { caption: 'Kapaleeshwarar temple' },
-      { caption: 'Filter coffee stop' },
-      { caption: 'Sari shopping' }
+      { caption: 'Marina waves', imageUrl: 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'Kapaleeshwarar temple', imageUrl: 'https://images.unsplash.com/photo-1609137144814-722a4f404495?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'Filter coffee stop', imageUrl: 'https://images.unsplash.com/photo-1587049013516-72f10b776269?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'Sari shopping', imageUrl: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=400&q=80' }
     ]
   },
   {
@@ -45,10 +46,10 @@ const LOCATIONS_DATA: LocationEntry[] = [
     state: 'Uttarakhand',
     bgType: 'bg-theme-black',
     polaroids: [
-      { caption: 'Char Dukan pancakes' },
-      { caption: 'Ivy Cottage view' },
-      { caption: 'Mist in the pines' },
-      { caption: 'Lal Tibba sunset' }
+      { caption: 'Char Dukan pancakes', imageUrl: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'Ivy Cottage view', imageUrl: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'Mist in the pines', imageUrl: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'Lal Tibba sunset', imageUrl: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=400&q=80' }
     ]
   },
   {
@@ -57,10 +58,10 @@ const LOCATIONS_DATA: LocationEntry[] = [
     state: 'Uttarakhand',
     bgType: 'bg-theme-white',
     polaroids: [
-      { caption: 'Mall Road lights' },
-      { caption: 'Kempty cascade' },
-      { caption: 'Library bazaar' },
-      { caption: 'Clouds End walk' }
+      { caption: 'Mall Road lights', imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'Kempty cascade', imageUrl: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'Library bazaar', imageUrl: 'https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'Clouds End walk', imageUrl: 'https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?auto=format&fit=crop&w=400&q=80' }
     ]
   },
   {
@@ -69,10 +70,10 @@ const LOCATIONS_DATA: LocationEntry[] = [
     state: 'Uttarakhand',
     bgType: 'bg-theme-black',
     polaroids: [
-      { caption: 'Laxman Jhula crossing' },
-      { caption: 'Ganga Aarti glow' },
-      { caption: 'Beetles Ashram walls' },
-      { caption: 'Mountain breeze' }
+      { caption: 'Laxman Jhula crossing', imageUrl: 'https://images.unsplash.com/photo-1598977123418-45f04b61b4bb?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'Ganga Aarti glow', imageUrl: 'https://images.unsplash.com/photo-1561361062-856753540121?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'Beatles Ashram walls', imageUrl: 'https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'Mountain breeze', imageUrl: 'https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&w=400&q=80' }
     ]
   },
   {
@@ -81,10 +82,10 @@ const LOCATIONS_DATA: LocationEntry[] = [
     state: 'National Capital Territory',
     bgType: 'bg-theme-white',
     polaroids: [
-      { caption: 'Lodi Gardens stroll' },
-      { caption: 'Humayun\'s tomb' },
-      { caption: 'Old Delhi spice walk' },
-      { caption: 'Street side chai' }
+      { caption: 'Lodi Gardens stroll', imageUrl: 'https://images.unsplash.com/photo-1585135497273-1a86b09fe70e?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'Humayun\'s tomb', imageUrl: 'https://images.unsplash.com/photo-1587135941948-670b381f08e9?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'Old Delhi spice walk', imageUrl: 'https://images.unsplash.com/photo-1596797038530-2c107229654b?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'Street side chai', imageUrl: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=400&q=80' }
     ]
   },
   {
@@ -93,10 +94,10 @@ const LOCATIONS_DATA: LocationEntry[] = [
     state: 'Goa',
     bgType: 'bg-theme-black',
     polaroids: [
-      { caption: 'Palolem sunset' },
-      { caption: 'Fontainhas colorful streets' },
-      { caption: 'Fort Aguada breeze' },
-      { caption: 'Shack lunches' }
+      { caption: 'Palolem sunset', imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'Fontainhas colorful streets', imageUrl: 'https://images.unsplash.com/photo-1616843413587-9e3a37f7f3f2?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'Fort Aguada breeze', imageUrl: 'https://images.unsplash.com/photo-1540206395-68808572332f?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'Shack lunches', imageUrl: 'https://images.unsplash.com/photo-1501446529957-6226bd447c46?auto=format&fit=crop&w=400&q=80' }
     ]
   },
   {
@@ -105,10 +106,10 @@ const LOCATIONS_DATA: LocationEntry[] = [
     state: 'Karnataka',
     bgType: 'bg-theme-white',
     polaroids: [
-      { caption: 'Coffee estate paths' },
-      { caption: 'Abbey falls splash' },
-      { caption: 'Raja\'s seat mist' },
-      { caption: 'Golden Temple peace' }
+      { caption: 'Coffee estate paths', imageUrl: 'https://images.unsplash.com/photo-1500627869374-13cd993b1115?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'Abbey falls splash', imageUrl: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'Raja\'s seat mist', imageUrl: 'https://images.unsplash.com/photo-1475924156734-496f6cac6ec1?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'Golden Temple peace', imageUrl: 'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=400&q=80' }
     ]
   },
   {
@@ -117,10 +118,10 @@ const LOCATIONS_DATA: LocationEntry[] = [
     state: 'Tamil Nadu',
     bgType: 'bg-theme-black',
     polaroids: [
-      { caption: 'Toy train ride' },
-      { caption: 'Botanical blooms' },
-      { caption: 'Pykara lake blue' },
-      { caption: 'Tea estates rolling green' }
+      { caption: 'Toy train ride', imageUrl: 'https://images.unsplash.com/photo-1532408840957-22729327b360?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'Botanical blooms', imageUrl: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'Pykara lake blue', imageUrl: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'Tea estates rolling green', imageUrl: 'https://images.unsplash.com/photo-1554160113-748ff8d07019?auto=format&fit=crop&w=400&q=80' }
     ]
   },
   {
@@ -129,10 +130,10 @@ const LOCATIONS_DATA: LocationEntry[] = [
     state: 'Tamil Nadu',
     bgType: 'bg-theme-white',
     polaroids: [
-      { caption: 'Dolphin\'s Nose overlook' },
-      { caption: 'Sim\'s park quiet' },
-      { caption: 'Tea factory scent' },
-      { caption: 'High tea afternoon' }
+      { caption: 'Dolphin\'s Nose overlook', imageUrl: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'Sim\'s park quiet', imageUrl: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'Tea factory scent', imageUrl: 'https://images.unsplash.com/photo-1563822249548-9a72b6353cdb?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'High tea afternoon', imageUrl: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=400&q=80' }
     ]
   },
   {
@@ -141,10 +142,10 @@ const LOCATIONS_DATA: LocationEntry[] = [
     state: 'Karnataka',
     bgType: 'bg-theme-black',
     polaroids: [
-      { caption: 'Cubbon Park morning' },
-      { caption: 'Lalbagh glasshouse' },
-      { caption: 'Filter coffee mornings' },
-      { caption: 'Corner House sundae' }
+      { caption: 'Cubbon Park morning', imageUrl: 'https://images.unsplash.com/photo-1500627869374-13cd993b1115?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'Lalbagh glasshouse', imageUrl: 'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'Filter coffee mornings', imageUrl: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'Corner House sundae', imageUrl: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=400&q=80' }
     ]
   },
   {
@@ -153,10 +154,10 @@ const LOCATIONS_DATA: LocationEntry[] = [
     state: 'Uttarakhand',
     bgType: 'bg-theme-white',
     polaroids: [
-      { caption: 'Naini Lake rowing' },
-      { caption: 'Snow View peak' },
-      { caption: 'Tiffin Top hike' },
-      { caption: 'Mall Road reflection' }
+      { caption: 'Naini Lake rowing', imageUrl: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'Snow View peak', imageUrl: 'https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'Tiffin Top hike', imageUrl: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=80' },
+      { caption: 'Mall Road reflection', imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80' }
     ]
   }
 ]
@@ -300,7 +301,7 @@ function TimelineItem({ loc, isFinal }: { loc: LocationEntry; isFinal: boolean }
     hidden: {},
     visible: {
       transition: {
-        staggerChildren: 0.12,
+        staggerChildren: 0.08,
         delayChildren: 0.05
       }
     }
@@ -318,36 +319,131 @@ function TimelineItem({ loc, isFinal }: { loc: LocationEntry; isFinal: boolean }
     }
   }
 
-  // Pre-calculate stable random values for the polaroid cards in this stack (18 to 30 cards)
+  // Pre-calculate stable random values for the polaroid cards in this stack (12 to 15 cards)
   const rand = getSeededRandom(loc.id)
-  const count = 18 + Math.floor(rand() * 13) // 18 to 30 polaroids
+  const memoriesCount = loc.polaroids.length
+  
+  // Collage size of 12-15 polaroids
+  const count = 12 + Math.floor(rand() * 4) // deterministic count: 12, 13, 14, or 15 polaroids
+
+  // Deterministically shuffle stacking order (z-indices) using seeded Fisher-Yates
+  const zIndices = Array.from({ length: count }, (_, i) => i + 1)
+  for (let i = count - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [zIndices[i], zIndices[j]] = [zIndices[j], zIndices[i]]
+  }
+
   const polaroidsWithLayout = Array.from({ length: count }).map((_, pIndex) => {
-    const angle = rand() * Math.PI * 2
-    const radiusX = 160 + rand() * 140
-    const radiusY = 70 + rand() * 70
-    const distanceFactor = 0.15 + rand() * 0.85
+    const memoryIndex = pIndex % memoriesCount
+    const memory = loc.polaroids[memoryIndex]
     
-    const offsetX = Math.cos(angle) * distanceFactor * radiusX
-    const offsetY = Math.sin(angle) * distanceFactor * radiusY
-    const rotation = (rand() * 26 - 13) // rotations between -13deg and +13deg
-    const zIndex = pIndex + 1
-    const breatheDuration = 8 + rand() * 6 // very slow (8s to 14s)
-    const breatheDelay = rand() * -15 // asynchronous delay
+    // We define a set of 8 distinct target layout zones to scatter cards across the screen.
+    const zones = [
+      [-320, -180, 120, 240],  // Zone 0: Beneath CTA (Bottom Left of Collage) -> Shifted right & down
+      [-180, -60, 80, 180],    // Zone 1: Left-Center (Lower middle-left) -> Shifted right & down
+      [-60, 60, 20, 120],      // Zone 2: Center Pile (Main stack)
+      [60, 180, -140, 60],     // Zone 3: Right-Center (Beside text, slightly right)
+      [180, 320, -80, 80],     // Zone 4: Far Right (Near right viewport edge)
+      [120, 240, 140, 260],    // Zone 5: Bottom Right (Close to bottom curve)
+      [180, 300, -240, -120],  // Zone 6: Top Right (Slightly upward, far to the right of title)
+      [-80, 80, 40, 140]       // Zone 7: Center Pile 2 (Overlaying center)
+    ]
     
-    // Cycle through provided captions, fallback to generic
-    const originalCaption = loc.polaroids[pIndex % loc.polaroids.length]?.caption
-    const caption = originalCaption || `Memory #${pIndex + 1}`
+    // Distribute card indices across the zones to cover all directions
+    let zoneIndex = pIndex % zones.length
+    if (pIndex >= zones.length) {
+      zoneIndex = Math.floor(rand() * zones.length)
+    }
+    
+    const zone = zones[zoneIndex]
+    
+    // Seeded random coordinates within the zone boundaries
+    const offsetX = zone[0] + rand() * (zone[1] - zone[0])
+    const offsetY = zone[2] + rand() * (zone[3] - zone[2])
+    
+    // Small random rotation range: -18deg to +18deg
+    const rotation = -18 + rand() * 36
+    
+    // Subtle scale variation around 95% to 105%
+    const scale = 0.95 + rand() * 0.10
+    
+    const zIndex = zIndices[pIndex]
+    
+    // Floating idle animation configurations
+    const breatheDuration = 6 + rand() * 4
+    const breatheDelay = -rand() * breatheDuration
+    const driftY = 1.5 + rand() * 1.5
+    const driftRotate = 0.3 + rand() * 0.5
+
+    // Staggered entry delay and initial drop rotation offset
+    const entryDelay = pIndex * 0.08
+    const entryRotateOffset = -20 + rand() * 40
+    
+    // Hover variables
+    const hoverDelay = (count - 1 - pIndex) * 0.012
+    const hoverTilt = (rand() * 3 - 1.5) * (pIndex / count)
     
     return {
-      caption,
-      rotation,
+      caption: memory.caption,
+      imageUrl: memory.imageUrl,
       offsetX,
       offsetY,
+      rotation,
+      scale,
       zIndex,
       breatheDuration,
-      breatheDelay
+      breatheDelay,
+      driftY,
+      driftRotate,
+      entryDelay,
+      entryRotateOffset,
+      hoverDelay,
+      hoverTilt
     }
   })
+
+  interface PolaroidLayoutCard {
+    caption: string;
+    imageUrl?: string;
+    offsetX: number;
+    offsetY: number;
+    rotation: number;
+    scale: number;
+    zIndex: number;
+    breatheDuration: number;
+    breatheDelay: number;
+    driftY: number;
+    driftRotate: number;
+    entryDelay: number;
+    entryRotateOffset: number;
+    hoverDelay: number;
+    hoverTilt: number;
+  }
+
+  // Framer Motion staggered spring drop-in animation configurations
+  const cardVariants = {
+    hidden: (card: PolaroidLayoutCard) => ({
+      opacity: 0,
+      x: card.offsetX,
+      y: card.offsetY - 200,
+      rotate: card.rotation + card.entryRotateOffset,
+      scale: card.scale * 0.8
+    }),
+    visible: (card: PolaroidLayoutCard) => ({
+      opacity: 1,
+      x: card.offsetX,
+      y: card.offsetY,
+      rotate: card.rotation,
+      scale: card.scale,
+      transition: {
+        type: 'spring' as const,
+        stiffness: 85,
+        damping: 14,
+        mass: 1.1,
+        delay: card.entryDelay
+      }
+    })
+  }
 
   // Determine section background style classes
   let bgClass = `curved-section ${loc.bgType}`
@@ -368,50 +464,76 @@ function TimelineItem({ loc, isFinal }: { loc: LocationEntry; isFinal: boolean }
         whileInView="visible"
         viewport={{ once: true, margin: "-120px" }}
       >
-        {/* Text & Stack Area (aligned content) */}
         <div className="timeline-item-details">
-          <motion.div className="location-header-wrapper" variants={childVariants}>
-            <span className="location-state-label">
-              {loc.state || 'India'}
-            </span>
-            <div className="location-title-row">
-              <div className="timeline-dot-container">
-                <img src="/assets/current_location.svg" className="timeline-dot-svg" alt="marker" />
+          <div className="timeline-text-side">
+            <motion.div className="location-header-wrapper" variants={childVariants}>
+              <span className="location-state-label">
+                {loc.state || 'India'}
+              </span>
+              <div className="location-title-row">
+                <div className="timeline-dot-container">
+                  <img src="/assets/current_location.svg" className="timeline-dot-svg" alt="marker" />
+                </div>
+                <h2 className="location-title">
+                  {loc.name}
+                </h2>
               </div>
-              <h2 className="location-title">
-                {loc.name}
-              </h2>
-            </div>
-          </motion.div>
+            </motion.div>
 
-          <motion.div className="browse-button-wrapper" variants={childVariants}>
-            <button className="browse-roll-cta">
-              Browse the Roll
-            </button>
-          </motion.div>
+            <motion.div className="browse-button-wrapper" variants={childVariants}>
+              <button className="browse-roll-cta">
+                Browse the Roll
+              </button>
+            </motion.div>
+          </div>
 
           <motion.div className="polaroid-stack-wrapper" variants={childVariants}>
             <div className="polaroid-card-stack">
               {polaroidsWithLayout.map((card, idx) => (
-                <div
+                <motion.div
                   key={idx}
                   className="polaroid-card-item"
+                  custom={card}
+                  variants={cardVariants}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, margin: "-80px" }}
                   style={{
-                    transform: `translate(${card.offsetX}px, ${card.offsetY}px) rotate(${card.rotation}deg)`,
                     zIndex: card.zIndex,
-                    animation: `polaroidIdleAnimation ${card.breatheDuration}s ease-in-out infinite`,
-                    animationDelay: `${card.breatheDelay}s`
+                    '--hover-delay': `${card.hoverDelay}s`,
+                    '--hover-tilt': `${card.hoverTilt}deg`,
+                    '--offset-x': `${card.offsetX}px`,
+                    '--offset-y': `${card.offsetY}px`,
+                    '--rotation': `${card.rotation}deg`,
+                    '--scale': card.scale,
                   } as React.CSSProperties}
                 >
-                  {/* Polaroid image placeholder */}
-                  <div className="polaroid-image-frame">
-                    <div className="polaroid-img-placeholder" />
+                  <div
+                    className="polaroid-card-inner"
+                    style={{
+                      animation: `polaroidIdleAnimation ${card.breatheDuration}s ease-in-out infinite`,
+                      animationDelay: `${card.breatheDelay}s`,
+                      '--drift-y': `${card.driftY}px`,
+                      '--drift-rotate': `${card.driftRotate}deg`,
+                    } as React.CSSProperties}
+                  >
+                    <div className="polaroid-image-frame">
+                      {card.imageUrl ? (
+                        <img 
+                          src={card.imageUrl} 
+                          alt={card.caption} 
+                          className="polaroid-img" 
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="polaroid-img-placeholder" />
+                      )}
+                    </div>
+                    <div className="polaroid-caption-strip">
+                      {card.caption}
+                    </div>
                   </div>
-                  {/* Handwritten caption */}
-                  <div className="polaroid-caption-strip">
-                    {card.caption}
-                  </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </motion.div>
