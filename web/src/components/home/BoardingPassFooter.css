@@ -1,0 +1,73 @@
+.boarding-pass-footer-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 120px 24px 160px 24px;
+  width: 100%;
+  background-color: transparent;
+}
+
+.boarding-pass-card-wrapper {
+  width: 100%;
+  max-width: 1180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.boarding-pass-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.boarding-pass-image-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  filter: drop-shadow(0 15px 35px rgba(0, 0, 0, 0.1));
+}
+
+.boarding-pass-footer-image {
+  width: 100%;
+  max-width: 1180px;
+  height: auto;
+  display: block;
+}
+
+/* Hover effects for a premium feel when cursor enters the ticket */
+.boarding-pass-link:hover .boarding-pass-image-container {
+  transform: translateY(-8px);
+  filter: drop-shadow(0 25px 55px rgba(0, 0, 0, 0.18));
+}
+
+.boarding-pass-signature {
+  margin-top: 36px;
+  font-family: "Figma Hand", "Bradley Hand", "Architects Daughter", cursive;
+  font-size: 24px;
+  font-weight: 700;
+  color: #000000;
+  text-align: center;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+  transition: opacity 0.3s ease;
+}
+
+.boarding-pass-link:hover .boarding-pass-signature {
+  opacity: 0.7;
+}
+
+@media (max-width: 768px) {
+  .boarding-pass-footer-section {
+    padding: 80px 16px 100px 16px;
+  }
+  .boarding-pass-signature {
+    margin-top: 24px;
+    font-size: 18px;
+  }
+}
