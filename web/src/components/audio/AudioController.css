@@ -1,101 +1,161 @@
-.global-audio-controller {
+.global-audio-controller-wrapper {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
-  height: 48px;
+  top: 96px;
+  left: 40px;
+  z-index: 1000;
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: flex-end;
-  padding: 4px;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(12px) saturate(140%);
-  -webkit-backdrop-filter: blur(12px) saturate(140%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 24px;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
-  z-index: 1000;
-  overflow: hidden;
-  will-change: width;
+  pointer-events: auto;
+  will-change: transform, opacity;
 }
 
-.volume-slider-wrapper {
+.cta-container {
+  position: relative;
+  height: 56px;
+  display: flex;
+  align-items: center;
+}
+
+.audio-journey-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+  position: relative;
+  display: block;
+}
+
+.audio-cta-svg {
+  height: 56px;
+  display: block;
+  pointer-events: none;
+}
+
+/* Equalizer Styling */
+.equalizer-container {
+  position: absolute;
+  left: 26.5px;
+  top: 27px;
+  transform: translateY(-50%);
+  width: 12.5px;
+  height: 14px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.equalizer-bar {
+  width: 2px;
+  height: 6px; /* equal height when paused */
+  background-color: rgba(0, 0, 0, 0.9);
+  border-radius: 1px;
+  transition: height 0.25s ease-out;
+  will-change: height;
+}
+
+/* Equalizer Keyframe Animations */
+@keyframes eq-bar-1 {
+  0%, 100% { height: 4px; }
+  50% { height: 12px; }
+}
+@keyframes eq-bar-2 {
+  0%, 100% { height: 12px; }
+  50% { height: 3px; }
+}
+@keyframes eq-bar-3 {
+  0%, 100% { height: 6px; }
+  50% { height: 14px; }
+}
+@keyframes eq-bar-4 {
+  0%, 100% { height: 10px; }
+  50% { height: 4px; }
+}
+
+.equalizer-container.playing .equalizer-bar:nth-child(1) {
+  animation: eq-bar-1 0.75s ease-in-out infinite;
+}
+.equalizer-container.playing .equalizer-bar:nth-child(2) {
+  animation: eq-bar-2 1.05s ease-in-out infinite;
+}
+.equalizer-container.playing .equalizer-bar:nth-child(3) {
+  animation: eq-bar-3 0.85s ease-in-out infinite;
+}
+.equalizer-container.playing .equalizer-bar:nth-child(4) {
+  animation: eq-bar-4 1.25s ease-in-out infinite;
+}
+
+/* Volume Slider Container (Glassmorphic) */
+.volume-slider-container-new {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  height: 40px; /* aligns vertically with the white pill rect inside the SVGs */
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px) saturate(120%);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
   overflow: hidden;
   will-change: width, opacity;
 }
 
-.audio-volume-slider {
+.audio-volume-slider-new {
   -webkit-appearance: none;
   appearance: none;
-  width: 100%;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 2px;
+  width: 80px;
+  height: 3px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 1.5px;
   outline: none;
   cursor: pointer;
   transition: background 0.2s ease;
 }
 
-.audio-volume-slider:hover {
-  background: rgba(255, 255, 255, 0.35);
+/* Make it readable on both light and dark backgrounds */
+.audio-volume-slider-new:hover {
+  background: rgba(0, 0, 0, 0.35);
 }
 
-.audio-volume-slider::-webkit-slider-thumb {
+.audio-volume-slider-new::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  background: #ffffff;
+  background: #000000;
   cursor: pointer;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
   transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.audio-volume-slider::-webkit-slider-thumb:hover {
+.audio-volume-slider-new::-webkit-slider-thumb:hover {
   transform: scale(1.3);
 }
 
-.audio-volume-slider::-moz-range-thumb {
-  width: 12px;
-  height: 12px;
+.audio-volume-slider-new::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  background: #ffffff;
+  background: #000000;
   border: none;
   cursor: pointer;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
   transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.audio-volume-slider::-moz-range-thumb:hover {
+.audio-volume-slider-new::-moz-range-thumb:hover {
   transform: scale(1.3);
 }
 
-.audio-control-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: transparent;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  padding: 0;
-  flex-shrink: 0;
-  position: relative;
-  outline: none;
-}
-
-.audio-control-btn img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  pointer-events: none;
-  border-radius: 50%;
+/* Adjustments for mixed-blend-mode compatibility if needed */
+@media (max-width: 680px) {
+  .global-audio-controller-wrapper {
+    top: auto;
+    bottom: 24px;
+    left: 24px;
+  }
 }
