@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { motion } from 'framer-motion'
+import { useAudioStore } from '../../store/audioStore'
 
 type DisclaimerScreenProps = {
   visible: boolean
@@ -12,20 +14,34 @@ const paragraphs = [
 ]
 
 export function DisclaimerScreen({ visible, onComplete }: DisclaimerScreenProps) {
+  const fadeOutDisclaimer = useAudioStore((state) => state.fadeOutDisclaimer)
+  const [isTransitioning, setIsTransitioning] = useState(false)
+
+  const handleContinue = () => {
+    if (isTransitioning) return
+    setIsTransitioning(true)
+    fadeOutDisclaimer(500)
+    setTimeout(() => {
+      onComplete()
+    }, 500)
+  }
+
+  const isScreenVisible = visible && !isTransitioning
+
   return (
     <motion.section
       className="disclaimer"
       initial={false}
-      animate={{ opacity: visible ? 1 : 0 }}
+      animate={{ opacity: isScreenVisible ? 1 : 0 }}
       transition={{ duration: 0.5 }}
-      onClick={onComplete}
-      aria-hidden={!visible}
+      onClick={handleContinue}
+      aria-hidden={!isScreenVisible}
     >
       <h1>Disclaimer.</h1>
       <motion.div
         className="disclaimer-copy"
         initial="hidden"
-        animate={visible ? 'visible' : 'hidden'}
+        animate={isScreenVisible ? 'visible' : 'hidden'}
         variants={{ visible: { transition: { staggerChildren: 0.1, delayChildren: 0.12 } } }}
       >
         <motion.p variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.38 } } }}>Dear Visitor,</motion.p>
@@ -41,3 +57,4 @@ export function DisclaimerScreen({ visible, onComplete }: DisclaimerScreenProps)
     </motion.section>
   )
 }
+

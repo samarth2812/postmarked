@@ -3,6 +3,7 @@ import { CircleReveal } from './CircleReveal'
 import { DisclaimerScreen } from './DisclaimerScreen'
 import { IntroSign } from './IntroSign'
 import { LogoReveal } from './LogoReveal'
+import { useAudioStore } from '../../store/audioStore'
 
 type LandingSequenceProps = {
   onLandingComplete: () => void
@@ -20,11 +21,24 @@ const schedule: Array<[number, SequenceStage]> = [
 
 export function LandingSequence({ onLandingComplete }: LandingSequenceProps) {
   const [stage, setStage] = useState<SequenceStage>('intro')
+  const startLoader = useAudioStore((state) => state.startLoader)
+  const fadeOutLoader = useAudioStore((state) => state.fadeOutLoader)
+  const startDisclaimer = useAudioStore((state) => state.startDisclaimer)
 
   useEffect(() => {
     const timers = schedule.map(([delay, nextStage]) => window.setTimeout(() => setStage(nextStage), delay))
     return () => timers.forEach(window.clearTimeout)
   }, [])
+
+  useEffect(() => {
+    if (stage === 'wobble') {
+      startLoader()
+    } else if (stage === 'reveal') {
+      fadeOutLoader(700)
+    } else if (stage === 'disclaimer') {
+      startDisclaimer()
+    }
+  }, [stage, startLoader, fadeOutLoader, startDisclaimer])
 
   const introVisible = stage === 'intro' || stage === 'wobble' || stage === 'reveal'
 
@@ -37,3 +51,4 @@ export function LandingSequence({ onLandingComplete }: LandingSequenceProps) {
     </main>
   )
 }
+
