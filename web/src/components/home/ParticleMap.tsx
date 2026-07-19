@@ -31,6 +31,7 @@ const cities: City[] = [
 type ParticleMapProps = {
   showPolaroids: boolean
   onAssemblyComplete: () => void
+  onAssemblyStart?: () => void
 }
 
 type ParticleData = {
@@ -114,7 +115,7 @@ function createRandom(seed: number) {
   }
 }
 
-export function ParticleMap({ showPolaroids, onAssemblyComplete }: ParticleMapProps) {
+export function ParticleMap({ showPolaroids, onAssemblyComplete, onAssemblyStart }: ParticleMapProps) {
   const { viewport } = useThree()
   const { width, height } = viewport
   
@@ -126,6 +127,7 @@ export function ParticleMap({ showPolaroids, onAssemblyComplete }: ParticleMapPr
   // Track timeline in refs for high frequency useFrame updates without re-renders
   const elapsedTimeRef = useRef(0)
   const assemblyCompleteTriggeredRef = useRef(false)
+  const assemblyStartedTriggeredRef = useRef(false)
   const activeCityIdRef = useRef<string | null>(null)
   
   // Reference for updating the positions inside the frame loop
@@ -426,6 +428,13 @@ export function ParticleMap({ showPolaroids, onAssemblyComplete }: ParticleMapPr
     let assembleFactor = 0
     if (elapsed > 1.0) {
       assembleFactor = Math.min(1.0, (elapsed - 1.0) / 1.2)
+    }
+    
+    if (elapsed >= 1.0 && !assemblyStartedTriggeredRef.current) {
+      assemblyStartedTriggeredRef.current = true
+      setTimeout(() => {
+        onAssemblyStart?.()
+      }, 0)
     }
     
     if (elapsed >= 2.3 && !assemblyCompleteTriggeredRef.current) {

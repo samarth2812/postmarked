@@ -6,6 +6,7 @@ import './HomepageAudioController.css'
 
 // Import audio assets
 import goldenHourUrl from '../../../../docs/figma/music/goldern_hour.mp3'
+import dropSoundUrl from '../../../../docs/figma/music/drop_sound.mp3'
 import timeTravelUrl from '../../../../docs/figma/music/time-travel.mp3'
 import cityLightsUrl from '../../../../docs/figma/music/city_lights.mp3'
 import dayDreamUrl from '../../../../docs/figma/music/day_dream.mp3'
@@ -29,6 +30,14 @@ TRACKS.forEach((track) => {
   audioInstances[track.id] = audio
 })
 
+const dropAudio = new Audio(dropSoundUrl)
+dropAudio.preload = 'auto'
+dropAudio.loop = false
+dropAudio.volume = 0
+dropAudio.load()
+
+const dropVolumeScale = { value: 0 }
+
 // Volume scale tracking for GSAP tweens
 const volumeScales: Record<string, { value: number }> = {
   golden_hour: { value: 0 },
@@ -39,14 +48,16 @@ const volumeScales: Record<string, { value: number }> = {
 
 interface HomepageAudioControllerProps {
   isAssembled: boolean
+  isAssembling: boolean
 }
 
-export function HomepageAudioController({ isAssembled }: HomepageAudioControllerProps) {
+export function HomepageAudioController({ isAssembled, isAssembling }: HomepageAudioControllerProps) {
   const { isEnabled, volume, togglePlayPause, setVolume, isBrowseRollActive } = useAudioStore()
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0)
   const [isPlaylistOpen, setIsPlaylistOpen] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
   const [isFocused, setIsFocused] = useState(false)
+  const [hasHandoffCompleted, setHandoffCompleted] = useState(false)
 
   const dropdownRef = useRef<HTMLDivElement>(null)
   const hasAutoplayed = useRef(false)
@@ -159,13 +170,13 @@ export function HomepageAudioController({ isAssembled }: HomepageAudioController
 
   // Synchronize play/pause state when isEnabled, isBrowseRollActive, or isAssembled changes
   useEffect(() => {
-    if (!isAssembled) return
+    if (!isAssembled || !hasHandoffCompleted) return
 
     const currentTrackId = TRACKS[currentTrackIndex].id
     if (isEnabled && !isBrowseRollActive) {
       const audio = audioInstances[currentTrackId]
       if (audio && audio.paused) {
-        playTrack(currentTrackId, hasAutoplayed.current ? 1.0 : 1.5)
+        playTrack(currentTrackId, hasAutoplayed.current ? 1.2 : 1.5)
         hasAutoplayed.current = true
       }
     } else {
@@ -174,7 +185,7 @@ export function HomepageAudioController({ isAssembled }: HomepageAudioController
         pauseTrack(currentTrackId, isBrowseRollActive ? 0.4 : 0.5)
       }
     }
-  }, [isEnabled, isBrowseRollActive, isAssembled, currentTrackIndex])
+  }, [isEnabled, isBrowseRollActive, isAssembled, hasHandoffCompleted, currentTrackIndex])
 
   // Synchronize playing volume when global volume changes
   useEffect(() => {
@@ -184,6 +195,74 @@ export function HomepageAudioController({ isAssembled }: HomepageAudioController
       audio.volume = volumeScales[currentTrackId].value * volume
     }
   }, [volume, currentTrackIndex, isEnabled, isBrowseRollActive])
+
+  // Handle drop.mp3 playback during assembly
+  useEffect(() => {
+    if (isAssembled) return
+
+    if (isAssembling && isEnabled && !isBrowseRollActive) {
+      gsap.killTweensOf(dropVolumeScale)
+      gsap.to(dropVolumeScale, {
+        value: 1,
+        duration: 0.4, // Fade in smoothly over 400ms (300-500ms)
+        ease: 'power1.out',
+        onUpdate: () => {
+          dropAudio.volume = dropVolumeScale.value * volume
+        },
+      })
+      dropAudio.play().catch((err) => {
+        console.warn('drop.mp3 play blocked:', err)
+      })
+    } else {
+      gsap.killTweensOf(dropVolumeScale)
+      gsap.to(dropVolumeScale, {
+        value: 0,
+        duration: 0.3, // Fade out over 300ms when paused/inactive
+        ease: 'power1.in',
+        onUpdate: () => {
+          dropAudio.volume = dropVolumeScale.value * volume
+        },
+        onComplete: () => {
+          dropAudio.pause()
+        },
+      })
+    }
+  }, [isAssembling, isAssembled, isEnabled, isBrowseRollActive, volume])
+
+  // Handle handoff when isAssembled becomes true
+  useEffect(() => {
+    if (!isAssembled) return
+
+    const isPlaying = !dropAudio.paused && dropVolumeScale.value > 0
+
+    if (isPlaying && isEnabled && !isBrowseRollActive) {
+      gsap.killTweensOf(dropVolumeScale)
+      gsap.to(dropVolumeScale, {
+        value: 0,
+        duration: 0.6, // Fade out smoothly over 600ms (500-800ms)
+        ease: 'power1.inOut',
+        onUpdate: () => {
+          dropAudio.volume = dropVolumeScale.value * volume
+        },
+        onComplete: () => {
+          dropAudio.pause()
+          setHandoffCompleted(true)
+        },
+      })
+    } else {
+      dropAudio.pause()
+      gsap.killTweensOf(dropVolumeScale)
+      dropVolumeScale.value = 0
+      setHandoffCompleted(true)
+    }
+  }, [isAssembled])
+
+  // Synchronize drop audio volume when global volume changes during playback
+  useEffect(() => {
+    if (!dropAudio.paused) {
+      dropAudio.volume = dropVolumeScale.value * volume
+    }
+  }, [volume])
 
   // Click outside listener for dropdown closing
   useEffect(() => {
@@ -209,6 +288,9 @@ export function HomepageAudioController({ isAssembled }: HomepageAudioController
         gsap.killTweensOf(volumeScales[id])
         volumeScales[id].value = 0
       })
+      dropAudio.pause()
+      gsap.killTweensOf(dropVolumeScale)
+      dropVolumeScale.value = 0
     }
   }, [])
 

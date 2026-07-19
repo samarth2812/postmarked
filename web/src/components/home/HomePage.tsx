@@ -8,6 +8,7 @@ import './HomePage.css'
 
 export function HomePage() {
   const [isAssembled, setIsAssembled] = useState(false)
+  const [isAssembling, setIsAssembling] = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
   const lenisRef = useRef<Lenis | null>(null)
 
@@ -79,7 +80,7 @@ export function HomePage() {
         </div>
       </header>
 
-      <HomepageAudioController isAssembled={isAssembled} />
+      <HomepageAudioController isAssembled={isAssembled} isAssembling={isAssembling} />
 
       {/* Hero Section (the Map experience) */}
       <section className="home-hero-section">
@@ -104,6 +105,7 @@ export function HomePage() {
             <ParticleMap
               showPolaroids={isAssembled}
               onAssemblyComplete={() => setIsAssembled(true)}
+              onAssemblyStart={() => setIsAssembling(true)}
             />
           </Canvas>
         </div>
