@@ -149,7 +149,8 @@
 .logo-reveal { position: absolute; inset: 0; display: grid; place-items: center; background: #000; z-index: 6; pointer-events: none; }
 .logo-reveal img { width: min(44.6vw, 673px); height: auto; }
 
-.disclaimer { position: absolute; inset: 0; z-index: 7; background: #000; color: #fff; cursor: pointer; user-select: none; }
+.disclaimer { position: absolute; inset: 0; z-index: 7; background: #000; color: #fff; cursor: pointer; user-select: none; pointer-events: none; }
+.stage-disclaimer .disclaimer { pointer-events: auto; }
 .disclaimer h1 { position: absolute; top: 9.3%; left: 50%; margin: 0; transform: translateX(-50%); color: rgba(255,255,255,.33); font-family: 'Instrument Sans', Arial, sans-serif; font-size: clamp(64px, 10.8vw, 164px); font-weight: 800; letter-spacing: -.08em; line-height: .86; }
 .disclaimer-copy { position: absolute; top: 30.4%; left: 7.45%; width: 85%; font-family: 'Figma Hand', 'Bradley Hand', cursive; font-size: clamp(18px, 2.04vw, 31px); font-weight: 700; line-height: 1.73; letter-spacing: .02em; }
 .disclaimer-copy p { margin: 0; }
