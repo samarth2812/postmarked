@@ -173,3 +173,53 @@
 }
 
 @media (prefers-reduced-motion: reduce) { .sign-rig, .circle-reveal, .logo-reveal, .disclaimer, .continue, .processing-loader span { transition-duration: .01ms !important; animation-duration: .01ms !important; } }
+
+.enter-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: fadeInOverlay 0.4s ease-out forwards;
+}
+
+.enter-button {
+  background: #000;
+  color: #fff;
+  border: none;
+  padding: 16px 36px;
+  font-family: "Instrument Sans", Arial, sans-serif;
+  font-size: clamp(16px, 1.2vw, 20px);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(0);
+  outline: none;
+}
+
+.enter-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+  background: #111;
+}
+
+.enter-button:active {
+  transform: translateY(1px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes fadeInOverlay {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

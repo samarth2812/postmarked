@@ -23,40 +23,75 @@ const volumeScales = {
   disclaimer: { value: 0 },
 }
 
-// Track blocked play attempts for browser autoplay policy
-let blockedAudios: HTMLAudioElement[] = []
+const registeredAudios = new Set<HTMLAudioElement>()
 
-const handleAutoplayInteraction = () => {
+export const registerAudioForUnlock = (audio: HTMLAudioElement) => {
+  registeredAudios.add(audio)
+}
+
+// Register initial global audio elements
+registerAudioForUnlock(loaderAudio)
+registerAudioForUnlock(disclaimerAudio)
+
+let isUnlocked = false
+
+const unlockAllAudio = (e?: Event) => {
+  if (isUnlocked) return
+
   const state = useAudioStore.getState()
-  if (!state.isEnabled) {
-    blockedAudios = []
-    return
+  const target = e?.target as HTMLElement | undefined
+  const isController = target?.closest('.global-audio-controller-wrapper')
+
+  if (state.isEnabled) {
+    registeredAudios.forEach((audio) => {
+      const isLoader = audio === loaderAudio
+      const isDisclaimer = audio === disclaimerAudio
+
+      const shouldPlayNow =
+        !isController && (
+          (isLoader && state.currentScene === 'loader') ||
+          (isDisclaimer && state.currentScene === 'disclaimer')
+        )
+
+      if (shouldPlayNow) {
+        audio.play().catch((err) => {
+          console.warn('Autoplay still blocked for active scene:', err)
+        })
+      } else {
+        if (audio.paused) {
+          audio.play()
+            .then(() => {
+              audio.pause()
+            })
+            .catch((err) => {
+              console.warn('Unlock failed for passive audio:', err)
+            })
+        }
+      }
+    })
   }
 
-  blockedAudios.forEach((audio) => {
-    if (audio === loaderAudio && state.currentScene === 'loader') {
-      audio.play().catch((err) => console.log('Autoplay still blocked:', err))
-    }
-    if (audio === disclaimerAudio && state.currentScene === 'disclaimer') {
-      audio.play().catch((err) => console.log('Autoplay still blocked:', err))
-    }
-  })
-  blockedAudios = []
+  isUnlocked = true
 
-  window.removeEventListener('click', handleAutoplayInteraction)
-  window.removeEventListener('pointerdown', handleAutoplayInteraction)
+  // Remove the event listeners
+  window.removeEventListener('click', unlockAllAudio)
+  window.removeEventListener('pointerdown', unlockAllAudio)
+  window.removeEventListener('touchstart', unlockAllAudio)
+  window.removeEventListener('keydown', unlockAllAudio)
 }
+
+// Add the event listeners for first user gesture
+window.addEventListener('click', unlockAllAudio)
+window.addEventListener('pointerdown', unlockAllAudio)
+window.addEventListener('touchstart', unlockAllAudio)
+window.addEventListener('keydown', unlockAllAudio)
 
 const playAudioSafely = (audio: HTMLAudioElement) => {
   audio.play().catch((err) => {
-    console.warn('Audio playback blocked by autoplay policy, waiting for interaction:', err)
-    if (!blockedAudios.includes(audio)) {
-      blockedAudios.push(audio)
-    }
-    window.addEventListener('click', handleAutoplayInteraction)
-    window.addEventListener('pointerdown', handleAutoplayInteraction)
+    console.warn('Audio playback blocked by autoplay policy, waiting for user gesture:', err)
   })
 }
+
 
 interface AudioState {
   isEnabled: boolean
@@ -193,6 +228,44 @@ export const useAudioStore = create<AudioState>((set, get) => {
 
     togglePlayPause: () => {
       const { isEnabled, currentScene, volume } = get()
+
+      // If enabled but blocked/paused due to browser autoplay, play it instead of toggling to disabled
+      let isBlocked = false
+      if (isEnabled) {
+        if (currentScene === 'loader' && loaderAudio.paused) {
+          isBlocked = true
+        } else if (currentScene === 'disclaimer' && disclaimerAudio.paused) {
+          isBlocked = true
+        }
+      }
+
+      if (isBlocked) {
+        if (currentScene === 'loader') {
+          playAudioSafely(loaderAudio)
+          gsap.killTweensOf(volumeScales.loader)
+          gsap.to(volumeScales.loader, {
+            value: 1,
+            duration: 0.5,
+            ease: 'power1.out',
+            onUpdate: () => {
+              loaderAudio.volume = volumeScales.loader.value * get().volume
+            },
+          })
+        } else if (currentScene === 'disclaimer') {
+          playAudioSafely(disclaimerAudio)
+          gsap.killTweensOf(volumeScales.disclaimer)
+          gsap.to(volumeScales.disclaimer, {
+            value: 1,
+            duration: 0.5,
+            ease: 'power1.out',
+            onUpdate: () => {
+              disclaimerAudio.volume = volumeScales.disclaimer.value * get().volume
+            },
+          })
+        }
+        return
+      }
+
       const nextEnabled = !isEnabled
       set({ isEnabled: nextEnabled })
       localStorage.setItem('postmarked_music_enabled', String(nextEnabled))

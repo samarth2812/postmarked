@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useAudioStore } from '../../store/audioStore'
+import { useAudioStore, registerAudioForUnlock } from '../../store/audioStore'
 import { gsap } from 'gsap'
 import './HomepageAudioController.css'
 
@@ -28,6 +28,7 @@ TRACKS.forEach((track) => {
   audio.volume = 0
   audio.load() // Preload
   audioInstances[track.id] = audio
+  registerAudioForUnlock(audio)
 })
 
 const dropAudio = new Audio(dropSoundUrl)
@@ -35,6 +36,8 @@ dropAudio.preload = 'auto'
 dropAudio.loop = false
 dropAudio.volume = 0
 dropAudio.load()
+registerAudioForUnlock(dropAudio)
+
 
 const dropVolumeScale = { value: 0 }
 

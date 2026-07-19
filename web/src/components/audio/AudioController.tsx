@@ -6,17 +6,23 @@ import resumeIcon from '../../../../docs/figma/music/Resume.svg'
 import './AudioController.css'
 
 export function AudioController() {
-  const { isEnabled, volume, togglePlayPause, setVolume } = useAudioStore()
+  const { isEnabled, volume, togglePlayPause, setVolume, currentScene } = useAudioStore()
   const [isHovered, setIsHovered] = useState(false)
   const [isFocused, setIsFocused] = useState(false)
 
   const isExpanded = isHovered || isFocused
+
+  if (currentScene !== 'disclaimer') {
+    return null
+  }
 
   return (
     <motion.div
       className="global-audio-controller-wrapper"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={(e) => e.stopPropagation()}
+      onPointerDown={(e) => e.stopPropagation()}
       initial={{ opacity: 0.8, y: 0 }}
       whileHover={{
         y: -2.5,
