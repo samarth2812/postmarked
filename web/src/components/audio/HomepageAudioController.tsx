@@ -252,6 +252,36 @@ export function HomepageAudioController({ isAssembled }: HomepageAudioController
                           <rect x="8" y="7" width="150.211" height="43" fill="#00FF00" style={{ mixBlendMode: 'saturation' }} />
                           <rect x="8" y="7" width="150.211" height="43" fill="#FF0000" style={{ mixBlendMode: 'saturation' }} />
                         </g>
+                        <g clipPath="url(#paint0_angular_315_85_clip_path)" data-figma-skip-parse="true">
+                          <g transform="matrix(0 0.2 -0.2 0 32 29)">
+                            <foreignObject x="-1005" y="-1005" width="2010" height="2010">
+                              <div
+                                xmlns="http://www.w3.org/1999/xhtml"
+                                style={{
+                                  background: 'conic-gradient(from 90deg,rgba(0, 0, 5, 1) 0deg,rgba(0, 0, 0, 1) 4.52418deg,rgba(0, 0, 0, 1) 6.26747deg,rgba(0, 0, 2, 1) 12.7613deg,rgba(1, 47, 3, 1) 14.5992deg,rgba(88, 110, 160, 1) 18.333deg,rgba(195, 228, 199, 1) 33.2955deg,rgba(173, 229, 216, 1) 37.2578deg,rgba(216, 235, 242, 1) 49.7547deg,rgba(182, 237, 207, 1) 72.6581deg,rgba(26, 145, 197, 1) 75.7268deg,rgba(3, 13, 126, 1) 77.2464deg,rgba(11, 2, 7, 1) 91.2179deg,rgba(26, 17, 20, 1) 100.105deg,rgba(30, 22, 33, 1) 109.179deg,rgba(80, 177, 209, 1) 132.035deg,rgba(53, 19, 106, 1) 134.901deg,rgba(51, 3, 79, 1) 167.029deg,rgba(137, 16, 119, 1) 175.225deg,rgba(250, 12, 136, 1) 180.933deg,rgba(240, 237, 186, 1) 196.529deg,rgba(248, 218, 87, 1) 219.828deg,rgba(223, 59, 46, 1) 235.609deg,rgba(18, 26, 101, 1) 236.198deg,rgba(8, 0, 11, 1) 251.319deg,rgba(2, 6, 41, 1) 269.913deg,rgba(12, 9, 36, 1) 271.818deg,rgba(19, 15, 32, 1) 283.163deg,rgba(20, 34, 79, 1) 294.211deg,rgba(6, 9, 64, 1) 312.234deg,rgba(5, 3, 52, 1) 314.478deg,rgba(3, 0, 29, 1) 324.395deg,rgba(1, 0, 79, 1) 337.704deg,rgba(0, 0, 53, 1) 340.87deg,rgba(1, 0, 31, 1) 344.828deg,rgba(0, 0, 24, 1) 352.98deg,rgba(0, 0, 12, 1) 354.797deg,rgba(0, 0, 5, 1) 360deg)',
+                                  height: '100%',
+                                  width: '100%',
+                                  opacity: 1
+                                }}
+                              />
+                            </foreignObject>
+                          </g>
+                        </g>
+                        <g clipPath="url(#paint1_angular_315_85_clip_path)" data-figma-skip-parse="true">
+                          <g transform="matrix(0 0.185185 -0.185185 0 32 29)">
+                            <foreignObject x="-1085.4" y="-1085.4" width="2170.8" height="2170.8">
+                              <div
+                                xmlns="http://www.w3.org/1999/xhtml"
+                                style={{
+                                  background: 'conic-gradient(from 90deg,rgba(104, 69, 135, 1) 0deg,rgba(117, 58, 122, 1) 4.59288deg,rgba(78, 34, 132, 1) 6.37906deg,rgba(76, 40, 127, 1) 12.6911deg,rgba(88, 178, 117, 1) 14.598deg,rgba(193, 209, 232, 1) 18.317deg,rgba(237, 248, 239, 1) 33.5689deg,rgba(225, 250, 244, 1) 36.9247deg,rgba(242, 252, 251, 1) 49.9771deg,rgba(226, 250, 234, 1) 72.6581deg,rgba(100, 212, 226, 1) 75.6575deg,rgba(25, 67, 188, 1) 77.3893deg,rgba(45, 22, 28, 1) 91.2241deg,rgba(64, 56, 45, 1) 100.189deg,rgba(63, 55, 58, 1) 109.033deg,rgba(93, 142, 185, 1) 131.787deg,rgba(70, 31, 99, 1) 134.868deg,rgba(60, 16, 75, 1) 166.872deg,rgba(90, 28, 91, 1) 174.942deg,rgba(161, 30, 96, 1) 186.09deg,rgba(205, 182, 115, 1) 202.704deg,rgba(236, 189, 73, 1) 220.011deg,rgba(225, 70, 39, 1) 235.55deg,rgba(23, 45, 95, 1) 236.214deg,rgba(37, 14, 32, 1) 251.444deg,rgba(10, 37, 80, 1) 269.997deg,rgba(48, 47, 88, 1) 271.729deg,rgba(80, 76, 97, 1) 283.008deg,rgba(99, 139, 169, 1) 294.268deg,rgba(84, 132, 170, 1) 311.898deg,rgba(88, 73, 168, 1) 314.157deg,rgba(96, 58, 157, 1) 324.436deg,rgba(72, 82, 180, 1) 337.84deg,rgba(94, 102, 177, 1) 340.971deg,rgba(69, 48, 143, 1) 344.863deg,rgba(70, 59, 151, 1) 352.832deg,rgba(90, 83, 151, 1) 354.523deg,rgba(104, 69, 135, 1) 360deg)',
+                                  height: '100%',
+                                  width: '100%',
+                                  opacity: 1
+                                }}
+                              />
+                            </foreignObject>
+                          </g>
+                        </g>
                         <circle cx="32" cy="29" r="200" fill="url(#paint2_radial_315_85)" style={{ mixBlendMode: 'difference' }} />
                         <rect x="8" y="7" width="150.211" height="43" fill="url(#paint3_linear_315_85)" fillOpacity="0.3" style={{ mixBlendMode: 'overlay' }} />
                         <rect x="8" y="7" width="150.211" height="43" fill="#D9D9D9" style={{ mixBlendMode: 'hard-light' }} />
@@ -376,6 +406,36 @@ export function HomepageAudioController({ isAssembled }: HomepageAudioController
                           <rect x="8" y="7" width="158.442" height="43" fill="#0000FF" style={{ mixBlendMode: 'saturation' }} />
                           <rect x="8" y="7" width="158.442" height="43" fill="#00FF00" style={{ mixBlendMode: 'saturation' }} />
                           <rect x="8" y="7" width="158.442" height="43" fill="#FF0000" style={{ mixBlendMode: 'saturation' }} />
+                        </g>
+                        <g clipPath="url(#paint0_angular_316_100_clip_path)" data-figma-skip-parse="true">
+                          <g transform="matrix(0 0.2 -0.2 0 32 29)">
+                            <foreignObject x="-1005" y="-1005" width="2010" height="2010">
+                              <div
+                                xmlns="http://www.w3.org/1999/xhtml"
+                                style={{
+                                  background: 'conic-gradient(from 90deg,rgba(0, 0, 5, 1) 0deg,rgba(0, 0, 0, 1) 4.52418deg,rgba(0, 0, 0, 1) 6.26747deg,rgba(0, 0, 2, 1) 12.7613deg,rgba(1, 47, 3, 1) 14.5992deg,rgba(88, 110, 160, 1) 18.333deg,rgba(195, 228, 199, 1) 33.2955deg,rgba(173, 229, 216, 1) 37.2578deg,rgba(216, 235, 242, 1) 49.7547deg,rgba(182, 237, 207, 1) 72.6581deg,rgba(26, 145, 197, 1) 75.7268deg,rgba(3, 13, 126, 1) 77.2464deg,rgba(11, 2, 7, 1) 91.2179deg,rgba(26, 17, 20, 1) 100.105deg,rgba(30, 22, 33, 1) 109.179deg,rgba(80, 177, 209, 1) 132.035deg,rgba(53, 19, 106, 1) 134.901deg,rgba(51, 3, 79, 1) 167.029deg,rgba(137, 16, 119, 1) 175.225deg,rgba(250, 12, 136, 1) 180.933deg,rgba(240, 237, 186, 1) 196.529deg,rgba(248, 218, 87, 1) 219.828deg,rgba(223, 59, 46, 1) 235.609deg,rgba(18, 26, 101, 1) 236.198deg,rgba(8, 0, 11, 1) 251.319deg,rgba(2, 6, 41, 1) 269.913deg,rgba(12, 9, 36, 1) 271.818deg,rgba(19, 15, 32, 1) 283.163deg,rgba(20, 34, 79, 1) 294.211deg,rgba(6, 9, 64, 1) 312.234deg,rgba(5, 3, 52, 1) 314.478deg,rgba(3, 0, 29, 1) 324.395deg,rgba(1, 0, 79, 1) 337.704deg,rgba(0, 0, 53, 1) 340.87deg,rgba(1, 0, 31, 1) 344.828deg,rgba(0, 0, 24, 1) 352.98deg,rgba(0, 0, 12, 1) 354.797deg,rgba(0, 0, 5, 1) 360deg)',
+                                  height: '100%',
+                                  width: '100%',
+                                  opacity: 1
+                                }}
+                              />
+                            </foreignObject>
+                          </g>
+                        </g>
+                        <g clipPath="url(#paint1_angular_316_100_clip_path)" data-figma-skip-parse="true">
+                          <g transform="matrix(0 0.185185 -0.185185 0 32 29)">
+                            <foreignObject x="-1085.4" y="-1085.4" width="2170.8" height="2170.8">
+                              <div
+                                xmlns="http://www.w3.org/1999/xhtml"
+                                style={{
+                                  background: 'conic-gradient(from 90deg,rgba(104, 69, 135, 1) 0deg,rgba(117, 58, 122, 1) 4.59288deg,rgba(78, 34, 132, 1) 6.37906deg,rgba(76, 40, 127, 1) 12.6911deg,rgba(88, 178, 117, 1) 14.598deg,rgba(193, 209, 232, 1) 18.317deg,rgba(237, 248, 239, 1) 33.5689deg,rgba(225, 250, 244, 1) 36.9247deg,rgba(242, 252, 251, 1) 49.9771deg,rgba(226, 250, 234, 1) 72.6581deg,rgba(100, 212, 226, 1) 75.6575deg,rgba(25, 67, 188, 1) 77.3893deg,rgba(45, 22, 28, 1) 91.2241deg,rgba(64, 56, 45, 1) 100.189deg,rgba(63, 55, 58, 1) 109.033deg,rgba(93, 142, 185, 1) 131.787deg,rgba(70, 31, 99, 1) 134.868deg,rgba(60, 16, 75, 1) 166.872deg,rgba(90, 28, 91, 1) 174.942deg,rgba(161, 30, 96, 1) 186.09deg,rgba(205, 182, 115, 1) 202.704deg,rgba(236, 189, 73, 1) 220.011deg,rgba(225, 70, 39, 1) 235.55deg,rgba(23, 45, 95, 1) 236.214deg,rgba(37, 14, 32, 1) 251.444deg,rgba(10, 37, 80, 1) 269.997deg,rgba(48, 47, 88, 1) 271.729deg,rgba(80, 76, 97, 1) 283.008deg,rgba(99, 139, 169, 1) 294.268deg,rgba(84, 132, 170, 1) 311.898deg,rgba(88, 73, 168, 1) 314.157deg,rgba(96, 58, 157, 1) 324.436deg,rgba(72, 82, 180, 1) 337.84deg,rgba(94, 102, 177, 1) 340.971deg,rgba(69, 48, 143, 1) 344.863deg,rgba(70, 59, 151, 1) 352.832deg,rgba(90, 83, 151, 1) 354.523deg,rgba(104, 69, 135, 1) 360deg)',
+                                  height: '100%',
+                                  width: '100%',
+                                  opacity: 1
+                                }}
+                              />
+                            </foreignObject>
+                          </g>
                         </g>
                         <circle cx="32" cy="29" r="200" fill="url(#paint2_radial_316_100)" style={{ mixBlendMode: 'difference' }} />
                         <rect x="8" y="7" width="158.442" height="43" fill="url(#paint3_linear_316_100)" fillOpacity="0.3" style={{ mixBlendMode: 'overlay' }} />
