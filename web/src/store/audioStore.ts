@@ -61,6 +61,7 @@ const playAudioSafely = (audio: HTMLAudioElement) => {
 interface AudioState {
   isEnabled: boolean
   volume: number
+  isBrowseRollActive: boolean
   currentScene: 'loader' | 'disclaimer' | 'none'
   startLoader: () => void
   fadeOutLoader: (durationMs: number) => Promise<void>
@@ -68,6 +69,7 @@ interface AudioState {
   fadeOutDisclaimer: (durationMs: number) => Promise<void>
   togglePlayPause: () => void
   setVolume: (vol: number) => void
+  setBrowseRollActive: (active: boolean) => void
 }
 
 export const useAudioStore = create<AudioState>((set, get) => {
@@ -84,11 +86,12 @@ export const useAudioStore = create<AudioState>((set, get) => {
   return {
     isEnabled: initialEnabled,
     volume: sanitizedVolume,
+    isBrowseRollActive: false,
     currentScene: 'none',
 
     startLoader: () => {
       set({ currentScene: 'loader' })
-      const { isEnabled, volume } = get()
+      const { isEnabled } = get()
 
       if (isEnabled) {
         loaderAudio.currentTime = 0
@@ -138,7 +141,7 @@ export const useAudioStore = create<AudioState>((set, get) => {
 
     startDisclaimer: () => {
       set({ currentScene: 'disclaimer' })
-      const { isEnabled, volume } = get()
+      const { isEnabled } = get()
 
       if (isEnabled) {
         disclaimerAudio.currentTime = 0
@@ -264,6 +267,10 @@ export const useAudioStore = create<AudioState>((set, get) => {
           disclaimerAudio.volume = volumeScales.disclaimer.value * sanitized
         }
       }
+    },
+
+    setBrowseRollActive: (active: boolean) => {
+      set({ isBrowseRollActive: active })
     },
   }
 })

@@ -12,9 +12,11 @@ function App() {
       {showHome ? (
         <HomePage />
       ) : (
-        <LandingSequence onLandingComplete={() => setShowHome(true)} />
+        <>
+          <LandingSequence onLandingComplete={() => setShowHome(true)} />
+          <AudioController />
+        </>
       )}
-      <AudioController />
     </>
   )
 }

@@ -232,7 +232,7 @@ export function BrowseRollExperience({
     stiffness: 110,
     damping: 17,
     mass: 1.15
-  }
+  } as const
 
   return createPortal(
     <div className="browse-experience-root">

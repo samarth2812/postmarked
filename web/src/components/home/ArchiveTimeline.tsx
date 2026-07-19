@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import './ArchiveTimeline.css'
 import { BrowseRollExperience } from './BrowseRollExperience'
 import { BoardingPassFooter } from './BoardingPassFooter'
+import { useAudioStore } from '../../store/audioStore'
 
 interface PolaroidCard {
   caption: string;
@@ -469,6 +470,10 @@ export function ArchiveTimeline() {
   } | null>(null)
 
   const [browseRollLocation, setBrowseRollLocation] = useState<LocationEntry | null>(null)
+
+  useEffect(() => {
+    useAudioStore.getState().setBrowseRollActive(!!browseRollLocation)
+  }, [browseRollLocation])
 
   const activeLocation = activePolaroid
     ? LOCATIONS_DATA.find((l) => l.id === activePolaroid.locationId)

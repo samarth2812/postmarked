@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { ParticleMap } from './ParticleMap'
 import { ArchiveTimeline } from './ArchiveTimeline'
+import { HomepageAudioController } from '../audio/HomepageAudioController'
 import Lenis from 'lenis'
 import './HomePage.css'
 
@@ -77,6 +78,8 @@ export function HomePage() {
           </button>
         </div>
       </header>
+
+      <HomepageAudioController isAssembled={isAssembled} />
 
       {/* Hero Section (the Map experience) */}
       <section className="home-hero-section">

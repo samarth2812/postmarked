@@ -469,7 +469,7 @@
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  color: #000000; /* Matches the vibrant red shutter button stopColor */
+  color: #ff0000; /* Matches the vibrant red shutter button stopColor */
   z-index: 10;
   pointer-events: none;
   font-family: "Caveat", "Architects Daughter", "Figma Hand", "Bradley Hand", cursive;
