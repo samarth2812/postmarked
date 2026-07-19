@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence, useMotionValue } from 'framer-motion'
 import { CameraSvg } from './CameraSvg'
+import { useAudioStore } from '../../store/audioStore'
+import cameraClickUrl from '../../../../docs/figma/music/camera_click.mp3'
 import './BrowseRollExperience.css'
 
 interface PolaroidCard {
@@ -55,6 +57,18 @@ export function BrowseRollExperience({
 
   const dragY = useMotionValue(0)
   const timersRef = useRef<number[]>([])
+  const clickAudioRef = useRef<HTMLAudioElement | null>(null)
+
+  // Preload camera click audio on mount
+  useEffect(() => {
+    const audio = new Audio(cameraClickUrl)
+    audio.preload = 'auto'
+    clickAudioRef.current = audio
+
+    return () => {
+      audio.pause()
+    }
+  }, [])
 
   const addTimer = (timerId: number) => {
     timersRef.current.push(timerId)
@@ -104,6 +118,20 @@ export function BrowseRollExperience({
 
   // Shutter button press sequence
   const handleShutterClick = () => {
+    // Play shutter sound on every click of the red button
+    const audio = clickAudioRef.current
+    const isAudioEnabled = useAudioStore.getState().isEnabled
+    const globalVolume = useAudioStore.getState().volume
+    if (audio && isAudioEnabled) {
+      audio.volume = globalVolume
+      audio.currentTime = 0
+      audio.play().catch((err) => {
+        if (err.name !== 'AbortError') {
+          console.warn('Camera click play failed:', err)
+        }
+      })
+    }
+
     if (step !== 'waiting-shutter') return
 
     setStep('shutter-clicked')
@@ -286,6 +314,17 @@ export function BrowseRollExperience({
                 className="instax-camera-svg"
                 onShutterClick={handleShutterClick}
               />
+
+              {/* Shutter Click Hint Sticker */}
+              {step === 'waiting-shutter' && (
+                <div className="shutter-click-me-hint">
+                  <span className="hint-text">CLICK ME!</span>
+                  <svg className="hint-arrow" width="60" height="45" viewBox="0 0 60 45" fill="none" stroke="currentColor">
+                    <path d="M10,5 Q30,8 48,32" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M36,32 L48,32 L48,20" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+              )}
 
               {/* Breathing shadow beneath the camera */}
               <motion.div

@@ -50,6 +50,7 @@
   justify-content: center;
   z-index: 5;
   pointer-events: auto;
+  margin-top: -380px; /* Slightly raise the camera upward so ejecting Polaroid is fully visible */
 }
 
 /* Coordinate Box matching SVG aspect-ratio for absolute element mapping */
@@ -434,6 +435,7 @@
 @media (max-width: 600px) {
   .camera-vibration-wrapper {
     width: min(90vw, 360px);
+    margin-top: -40px; /* Slightly raise the camera upward on mobile */
   }
   .polaroid-card.hero-card {
     height: 52vh; /* slightly shorter on mobile to clear nav buttons */
@@ -455,5 +457,42 @@
   .experience-close-btn {
     top: 20px;
     right: 20px;
+  }
+}
+
+/* Shutter Click Hint Sticker styling */
+.shutter-click-me-hint {
+  position: absolute;
+  left: -20%; /* Positioned to the left of the shutter button (which is at 20.7%) */
+  top: 10%;  /* Positioned slightly above the shutter button (which is at 38.5%) */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: #000000; /* Matches the vibrant red shutter button stopColor */
+  z-index: 10;
+  pointer-events: none;
+  font-family: "Caveat", "Architects Daughter", "Figma Hand", "Bradley Hand", cursive;
+  transform: rotate(-12deg);
+  animation: floatHint 2s infinite ease-in-out;
+}
+
+.shutter-click-me-hint .hint-text {
+  font-size: clamp(24px, 4vw, 36px);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.shutter-click-me-hint .hint-arrow {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+}
+
+@keyframes floatHint {
+  0%, 100% {
+    transform: rotate(-12deg) translateY(0);
+  }
+  50% {
+    transform: rotate(-10deg) translateY(-6px);
   }
 }
